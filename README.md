@@ -8,10 +8,7 @@
 </p>
 
 <p align="center">
-  <a href="../../releases/latest"><strong>⬇️ Download</strong></a> •
-  <a href="#features-özellikler"><strong>✨ Features</strong></a> •
-  <a href="README_ZH.md"><strong>中文文档</strong></a> •
-  <a href="#building--development-summary"><strong>🔧 Development</strong></a>
+  <a href="../../releases/latest"><strong>⬇️ Download</strong></a>
 </p>
 
 A lightweight, **human-like** auto clicker for Windows with a friendly Bongo Cat themed UI.
@@ -45,20 +42,23 @@ A lightweight, **human-like** auto clicker for Windows with a friendly Bongo Cat
 
 ## 🚀 Quick Start / Hızlı Başlangıç
 
-1. **Download / clone** this repository.
-2. Double-click **`BongoCatAutoClicker.bat`**.
-3. Adjust the settings, move your cursor over the target, and press **`F6`** (or click **BAŞLAT**).
-4. Press **`F6`** again to stop.
+### Download & Run (No Installation Needed)
+1. Click **⬇️ Download .exe** above → **BongoCatAutoClicker.bat** indir
+2. Extract `BongoCatAutoClicker-main.zip`
+3. Double-click **`BongoCatAutoClicker.bat`** → app açılır
+4. Adjust settings, move cursor to target, press **`F6`**
+5. Press **`F6`** again to stop
 
-> If a game runs **as administrator**, run the launcher as admin too:
-> right-click `BongoCatAutoClicker.bat` → **Run as administrator**.
->
-> Oyun **yönetici olarak** çalışıyorsa başlatıcıyı da yönetici çalıştırın:
-> `BongoCatAutoClicker.bat` → sağ tık → **Yönetici olarak çalıştır**.
+> **If game runs as admin:**
+> Right-click `BongoCatAutoClicker.bat` → **Run as administrator**
+
+> **Oyun yönetici olarak çalışıyorsa:**
+> `BongoCatAutoClicker.bat` → sağ tık → **Yönetici olarak çalıştır**
 
 ### Requirements / Gereksinimler
-- Windows 10 / 11 (Windows PowerShell 5.1 — preinstalled)
-- No internet connection or installation needed
+- Windows 10 / 11
+- Built-in PowerShell 5.1 (already installed)
+- No admin rights needed (unless target app requires it)
 
 ---
 
