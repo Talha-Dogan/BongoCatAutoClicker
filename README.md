@@ -8,7 +8,7 @@
 </p>
 
 <p align="center">
-  <a href="../../releases/latest"><strong>⬇️ Download</strong></a>
+  <a href="../../archive/refs/heads/main.zip"><strong>⬇️ Download ZIP</strong></a>
 </p>
 
 A lightweight, **human-like** auto clicker for Windows with a friendly Bongo Cat themed UI.
