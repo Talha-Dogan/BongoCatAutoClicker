@@ -381,7 +381,14 @@ $langCodes = @("EN", "TR", "ZH", "HI", "ES", "FR", "AR", "BN", "PT", "RU", "UR")
 $langBox.Add_SelectedIndexChanged({
     if ($langBox.SelectedIndex -ge 0 -and $langBox.SelectedIndex -lt $langCodes.Count) {
         Set-Language $langCodes[$langBox.SelectedIndex]
+
+        # Tüm UI string'lerini güncelle
         $form.Text = "😊 $(Get-String 'TITLE')"
+        $titleLabel.Text = Get-String 'TITLE'
+        $toggleBtn.Text = if ($engine.Running) { Get-String 'BTN_STOP' } else { Get-String 'BTN_START' }
+        $statusLabel.Text = if ($engine.Running) { Get-String 'STATUS_RUNNING' } else { Get-String 'STATUS_STOPPED' }
+        $countLabel.Text = "$(Get-String 'CLICK_COUNT')$($engine.ClickCount)"
+        $infoLabel.Text = "F6 = $(Get-String 'BTN_START')"
     }
 })
 
