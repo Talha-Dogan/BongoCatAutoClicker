@@ -170,7 +170,7 @@ $langBox.ForeColor = $cText
 $langBox.Font     = New-Object System.Drawing.Font($fUI, 8)
 [void]$langBox.Items.Add("English")
 [void]$langBox.Items.Add("Türkçe")
-$langBox.SelectedIndex = 1  # Türkçe default
+$langBox.SelectedIndex = 0  # English default
 $form.Controls.Add($langBox)
 
 # --- KART 1: Tiklama Hizi ---

@@ -3,7 +3,7 @@
 #  Sorumluluk (SRP): Dil desteği (İngilizce / Türkçe)
 # ============================================================
 
-$script:lang = "TR"  # Varsayılan dil
+$script:lang = "EN"  # Default language
 
 $script:strings = @{
     "EN" = @{
