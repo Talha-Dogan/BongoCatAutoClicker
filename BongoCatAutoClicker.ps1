@@ -21,6 +21,7 @@ $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 . (Join-Path $root 'src\Humanizer.ps1')
 . (Join-Path $root 'src\ClickEngine.ps1')
 . (Join-Path $root 'src\TurboEngine.ps1')
+. (Join-Path $root 'src\Localization.ps1')
 
 # --- Motoru olustur ---
 $engine = New-ClickEngine
@@ -116,8 +117,8 @@ function Add-LabeledNumeric {
 
 # ================== FORM ==================
 $form               = New-Object System.Windows.Forms.Form
-$form.Text          = "Bongo Cat Auto Clicker"
-$form.ClientSize    = New-Object System.Drawing.Size(412, 750)
+$form.Text          = "😊 $(Get-String 'TITLE')"
+$form.ClientSize    = New-Object System.Drawing.Size(412, 790)
 $form.StartPosition = "CenterScreen"
 $form.FormBorderStyle = "FixedSingle"
 $form.MaximizeBox   = $false
@@ -151,13 +152,34 @@ $pawLabel.Size     = New-Object System.Drawing.Size(412, 24)
 $pawLabel.TextAlign = "MiddleCenter"
 $form.Controls.Add($pawLabel)
 
+# --- Dil seçimi ---
+$langLabel          = New-Object System.Windows.Forms.Label
+$langLabel.Text     = "Language / Dil:"
+$langLabel.Font     = New-Object System.Drawing.Font($fUI, 8)
+$langLabel.ForeColor = $cText
+$langLabel.Location = New-Object System.Drawing.Point(14, 118)
+$langLabel.Size     = New-Object System.Drawing.Size(80, 18)
+$form.Controls.Add($langLabel)
+
+$langBox          = New-Object System.Windows.Forms.ComboBox
+$langBox.Location = New-Object System.Drawing.Point(98, 116)
+$langBox.Size     = New-Object System.Drawing.Size(60, 24)
+$langBox.DropDownStyle = "DropDownList"
+$langBox.BackColor = $cInput
+$langBox.ForeColor = $cText
+$langBox.Font     = New-Object System.Drawing.Font($fUI, 8)
+[void]$langBox.Items.Add("English")
+[void]$langBox.Items.Add("Türkçe")
+$langBox.SelectedIndex = 1  # Türkçe default
+$form.Controls.Add($langBox)
+
 # --- KART 1: Tiklama Hizi ---
-$grpSpeed = New-Card $form 18 122 376 102 "🐾 Tiklama Hizi"
+$grpSpeed = New-Card $form 18 142 376 102 "🐾 Tiklama Hizi"
 $intervalBox = Add-LabeledNumeric $grpSpeed "Temel aralik (ms):" 38 1 600000 $engine.Settings.BaseIntervalMs 10
 $varianceBox = Add-LabeledNumeric $grpSpeed "Hiz degiskenligi (%):" 70 0 90 $engine.Settings.VariancePercent 5
 
 # --- KART 2: Insan Benzeri Davranis ---
-$grpHuman = New-Card $form 18 234 376 232 "🐾 Insan Benzeri Davranis (Anti-Ban)"
+$grpHuman = New-Card $form 18 254 376 232 "🐾 Insan Benzeri Davranis (Anti-Ban)"
 $humanCheck          = New-Object System.Windows.Forms.CheckBox
 $humanCheck.Text     = "Insansi mod (onerilir)"
 $humanCheck.Font     = New-Object System.Drawing.Font($fUI, 9, [System.Drawing.FontStyle]::Bold)
@@ -184,7 +206,7 @@ $turboCheck.Checked  = $false
 $grpHuman.Controls.Add($turboCheck)
 
 # --- KART 3: Tiklama Secenekleri ---
-$grpClick = New-Card $form 18 476 376 102 "🐾 Tiklama Secenekleri"
+$grpClick = New-Card $form 18 496 376 102 "🐾 Tiklama Secenekleri"
 $btnTypeLabel          = New-Object System.Windows.Forms.Label
 $btnTypeLabel.Text     = "Fare tusu:"
 $btnTypeLabel.Font     = New-Object System.Drawing.Font($fUI, 9)
@@ -212,7 +234,7 @@ $repeatBox = Add-LabeledNumeric $grpClick "Tekrar (0 = sinirsiz):" 70 0 10000000
 # --- Baslat / Durdur (yuvarlak buton) ---
 $toggleBtn          = New-Object System.Windows.Forms.Button
 $toggleBtn.Text     = "▶  BASLAT  (F6)"
-$toggleBtn.Location = New-Object System.Drawing.Point(18, 592)
+$toggleBtn.Location = New-Object System.Drawing.Point(18, 612)
 $toggleBtn.Size     = New-Object System.Drawing.Size(376, 56)
 $toggleBtn.Font     = New-Object System.Drawing.Font($fUI, 13, [System.Drawing.FontStyle]::Bold)
 $toggleBtn.BackColor = $cGo
@@ -227,7 +249,7 @@ $form.Controls.Add($toggleBtn)
 $statusLabel          = New-Object System.Windows.Forms.Label
 $statusLabel.Text     = "💤 Durum: DURDU"
 $statusLabel.Font     = New-Object System.Drawing.Font($fUI, 11, [System.Drawing.FontStyle]::Bold)
-$statusLabel.Location = New-Object System.Drawing.Point(0, 658)
+$statusLabel.Location = New-Object System.Drawing.Point(0, 678)
 $statusLabel.Size     = New-Object System.Drawing.Size(412, 24)
 $statusLabel.TextAlign = "MiddleCenter"
 $statusLabel.ForeColor = $cStopTxt
@@ -237,7 +259,7 @@ $countLabel          = New-Object System.Windows.Forms.Label
 $countLabel.Text     = "🐾 Tiklama: 0"
 $countLabel.Font     = New-Object System.Drawing.Font($fUI, 10)
 $countLabel.ForeColor = $cText
-$countLabel.Location = New-Object System.Drawing.Point(0, 684)
+$countLabel.Location = New-Object System.Drawing.Point(0, 704)
 $countLabel.Size     = New-Object System.Drawing.Size(412, 22)
 $countLabel.TextAlign = "MiddleCenter"
 $form.Controls.Add($countLabel)
@@ -245,7 +267,7 @@ $form.Controls.Add($countLabel)
 $infoLabel          = New-Object System.Windows.Forms.Label
 $infoLabel.Text     = "F6 = baslat/durdur  •  imleci hedefe getirip basin"
 $infoLabel.Font     = New-Object System.Drawing.Font($fUI, 8)
-$infoLabel.Location = New-Object System.Drawing.Point(0, 706)
+$infoLabel.Location = New-Object System.Drawing.Point(0, 726)
 $infoLabel.Size     = New-Object System.Drawing.Size(412, 18)
 $infoLabel.TextAlign = "MiddleCenter"
 $infoLabel.ForeColor = [System.Drawing.Color]::FromArgb(180, 150, 160)
@@ -345,6 +367,16 @@ $hotkeyTimer.Add_Tick({
 $hotkeyTimer.Start()
 
 # --- Olaylar ---
+# Dil seçim
+$langBox.Add_SelectedIndexChanged({
+    if ($langBox.SelectedIndex -eq 0) {
+        Set-Language "EN"
+    } else {
+        Set-Language "TR"
+    }
+    $form.Text = "😊 $(Get-String 'TITLE')"
+})
+
 $toggleBtn.Add_Click({ Set-Running (-not $engine.Running) })
 $toggleBtn.Add_MouseEnter({
     if ($toggleBtn.Tag -eq "stop") { $toggleBtn.BackColor = $cStopHover } else { $toggleBtn.BackColor = $cGoHover }
@@ -369,3 +401,36 @@ $form.Add_FormClosing({
 $toggleBtn.Tag = "go"
 Update-HumanControlsEnabled
 [void]$form.ShowDialog()
+
+# SIG # Begin signature block
+# MIIFgwYJKoZIhvcNAQcCoIIFdDCCBXACAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
+# gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUYM9J1quc4PDxZmAJiBTqo84U
+# SpagggMhMIIDHTCCAgWgAwIBAgIQKDhswI3fToJKjstkm3OLJzANBgkqhkiG9w0B
+# AQsFADAXMRUwEwYDVQQDDAxUYWxoYSBEb8SfYW4wHhcNMjYwNjE3MTYxNDM5WhcN
+# MjcwNjE3MTYzNDM5WjAXMRUwEwYDVQQDDAxUYWxoYSBEb8SfYW4wggEiMA0GCSqG
+# SIb3DQEBAQUAA4IBDwAwggEKAoIBAQDNIGM4RJcXcREY6X1rzl67uGeUxVJA/YUV
+# tE33WO5AEGlw7CXYzs/dUYeDP2MEgRU08XPW0K0P1F9k5MIbGb6Mw8pQIfyo8sy1
+# BP+on7tReta8IsHXx9mVz0UF8C+eumgy9JSqY/Nm5LOaNN7oWeX7pmIGbpVEjPJC
+# w+UlvY0An/eVMzKksH2KiiWpAbooQkxoBIQjACaxJIWeeEy3xQHBiBC4gHTALR8G
+# 4QD8cNaNsw7STtRVI1YhVcVJhRjHCvM2tMHKEmxe8FKc09K5SA5eyScIT8UTPW9S
+# p4MnRCdUOQK13lgs13dlqkgtFoaxnjmX9e9NDR3ccOkb46EjkhAhAgMBAAGjZTBj
+# MA4GA1UdDwEB/wQEAwIHgDATBgNVHSUEDDAKBggrBgEFBQcDAzAdBgNVHREEFjAU
+# ghJ4bi0tdGFsaGEgZG9hbi1ocGIwHQYDVR0OBBYEFCUfwmMhsFphVW+CWsyNBFxW
+# 322kMA0GCSqGSIb3DQEBCwUAA4IBAQAAS+NZsF/VpjSinxuNNSafEDdmy1OlK6+H
+# Wj8mpykpuLuZvz/ImNIl0Jt3bsEVOORcpHPKSm7sYK9+6qb9dlgUpTFtqvPh18Ep
+# X4vw4WMx4SW7Wh8ab5YmRrOlHuD/vHv7QwAO162K9hu69EoBo25SLYSyeabz6JjF
+# VKpDOhs5mUeiUh/tGlKyUy4SUzlaGPQjE+t6pdkFd0bsiGO5ZVblq6tAXlAuJC9y
+# v6fXLTqUdJHSWdq9v6abH9aacLKLcTMMJLuDlxGBv72jbUTmE2yJRKA4IAs0KQNy
+# nSod5TgN+wrQPpUGAJ34FVljhfZXu2ufJX0t4V9YO9ZtfzjfJ6/DMYIBzDCCAcgC
+# AQEwKzAXMRUwEwYDVQQDDAxUYWxoYSBEb8SfYW4CECg4bMCN306CSo7LZJtziycw
+# CQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKECgAAwGQYJKoZIhvcN
+# AQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwGCisGAQQBgjcCARUw
+# IwYJKoZIhvcNAQkEMRYEFF6jvxSoD11Uhn39I4AaLkN9gxViMA0GCSqGSIb3DQEB
+# AQUABIIBALmJNqmI0eYvscK6xfZES3/MWx0cH2JM5BA+/nF1061ru4LSJvpFlW/v
+# lpycjy/5VE4aFjZV4tMHhxBY6qsKkPub/iJYEQ1gp6/P4pJIK2CfSbQsZiMonX6o
+# BJcX/toeqjETFXP3SQtwCGcV8eTrAL2L4EEy4CDW/5GECTHU8A0XSBWcfUZ0voWk
+# Mn2nWAJ2Lym0y0MwqX+TcFdOCS7EVxrh3xTlmrQfYc0/Tk2IfkfSfsUmtqXSY/oA
+# wsK7/+GA7w+AKwIYU3/epAzTbNSs3DfeWlpS3fmCYJAEy7mxZyHSrFBYM3t9HUNX
+# b6iSt3JCy0JvJEraijpwdV6+oXsjyV8=
+# SIG # End signature block
