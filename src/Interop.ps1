@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 #  Interop.ps1
 #  Sorumluluk (SRP): Isletim sistemi seviyesinde fare ve klavye
 #  girisi. Sadece Win32 API sarmalayicilari icerir; ust katman

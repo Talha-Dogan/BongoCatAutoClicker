@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 #  Humanizer.ps1
 #  Sorumluluk (SRP): Insan davranisini taklit eden zamanlama ve
 #  konum politikalari. "Ne zaman, ne kadar gecikme, ne kadar

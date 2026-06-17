@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 #  ClickEngine.ps1
 #  Sorumluluk (SRP): Tiklama akisini yonetir. Donanim katmani
 #  (Interop) ile davranis katmanini (Humanizer) birlestirir.

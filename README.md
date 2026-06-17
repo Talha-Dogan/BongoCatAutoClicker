@@ -1,10 +1,17 @@
-# 🐱 Bongo Cat Auto Clicker
+﻿# 🐱 Bongo Cat Auto Clicker
 
 <p align="center">
   <img alt="Platform" src="https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-0078D6?logo=windows">
   <img alt="Language" src="https://img.shields.io/badge/PowerShell-5.1%2B-5391FE?logo=powershell&logoColor=white">
   <img alt="Install" src="https://img.shields.io/badge/install-not%20required-success">
   <img alt="License" src="https://img.shields.io/badge/license-MIT-green">
+</p>
+
+<p align="center">
+  <a href="../../releases/latest"><strong>⬇️ Download</strong></a> •
+  <a href="#features-özellikler"><strong>✨ Features</strong></a> •
+  <a href="README_ZH.md"><strong>中文文档</strong></a> •
+  <a href="#building--development-summary"><strong>🔧 Development</strong></a>
 </p>
 
 A lightweight, **human-like** auto clicker for Windows with a friendly Bongo Cat themed UI.
@@ -25,16 +32,13 @@ A lightweight, **human-like** auto clicker for Windows with a friendly Bongo Cat
 
 ## ✨ Features / Özellikler
 
-- 🧠 **Human-like behavior (anti-pattern):**
-  - Gaussian (normal) distributed click intervals instead of a robotic constant rate
-  - Configurable speed variance (%)
-  - Random **micro-breaks** that mimic a person pausing
-  - Variable mouse button **hold time**
-  - Small random **cursor jitter** so you don't hit the exact same pixel every time
+- 🧠 **Two click modes:**
+  - **Normal mode:** Human-like behavior (Gaussian intervals, micro-breaks, hold randomization, cursor jitter) — anti-ban optimization
+  - **⚡ Turbo mode:** 1000+ CPS ultra-fast clicking (high-priority thread, zero delays) — raw speed
 - ⌨️ **Global hotkey `F6`** — start/stop even while the game window is focused
 - 🖱️ Left / right click, clicks at the **current cursor position**
 - 🔢 Repeat limit (or unlimited) with a completion sound
-- 🎨 Friendly Bongo Cat themed UI, live click counter & paw animation
+- 🎨 Cute pastel Bongo Cat themed UI, live click counter, paw animation, state-reactive emoji
 - 📦 **Zero dependencies** — no Python, no .NET SDK, no admin rights needed to run
 
 ---
@@ -80,9 +84,10 @@ The code follows a clean separation of concerns (SOLID — single responsibility
 ```
 BongoCatAutoClicker.ps1   → UI + composition root (presentation)
 src/
- ├─ Interop.ps1           → Win32 hardware layer (mouse, key state)   [SRP]
- ├─ Humanizer.ps1         → human-like timing/jitter policy (pure)    [SRP]
- └─ ClickEngine.ps1       → orchestration: combines the layers        [SRP, DIP]
+ ├─ Interop.ps1           → Win32 hardware layer (mouse, key state)            [SRP]
+ ├─ Humanizer.ps1         → human-like timing/jitter policy (pure, testable)   [SRP]
+ ├─ ClickEngine.ps1       → orchestration: combines Interop + Humanizer       [SRP, DIP]
+ └─ TurboEngine.ps1        → high-priority thread for 1000+ CPS ultra-fast     [SRP]
 ```
 
 - **Interop** knows only the OS; it has no idea a UI exists.
@@ -97,6 +102,43 @@ This makes the timing logic unit-testable and each piece replaceable without tou
 ## 🛠️ How human-like timing works
 
 Instead of a fixed interval, the next delay is drawn from a **normal distribution** (Box–Muller transform) centered on your base interval, clamped to a sane range, with an occasional longer "micro-break." Hold times and a tiny cursor jitter are randomized too. The result is a click stream that looks far less mechanical than a constant-rate clicker.
+
+---
+
+## 🔧 Building & Development Summary
+
+### Run from Source (No Build Needed)
+```bash
+git clone https://github.com/Talha-Dogan/BongoCatAutoClicker.git
+cd BongoCatAutoClicker
+BongoCatAutoClicker.bat
+```
+
+### Build Standalone .exe
+To create a single `.exe` file (no PowerShell visible):
+
+1. **Install PS2EXE** (one-time setup):
+   ```powershell
+   Install-Module ps2exe -Scope CurrentUser -Force
+   ```
+
+2. **Compile**:
+   ```powershell
+   ps2exe -inputFile BongoCatAutoClicker.ps1 -outputFile BongoCatAutoClicker.exe -runtime ps50
+   ```
+
+3. Share the `.exe` — it includes all modules bundled.
+
+### Project Structure
+- `BongoCatAutoClicker.ps1` — main UI
+- `BongoCatAutoClicker.bat` — launcher (hides PowerShell window)
+- `src/` — modular engine components (SOLID)
+- `LICENSE`, `README.md` — docs
+
+### Antivirus / Security
+- **VirusTotal**: [Check latest release](../../releases/latest)
+- The tool uses only standard Win32 APIs and Windows.Forms (both built-in)
+- Source is fully transparent — inspect the code before running
 
 ---
 

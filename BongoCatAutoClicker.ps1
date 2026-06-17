@@ -20,9 +20,12 @@ $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 . (Join-Path $root 'src\Interop.ps1')
 . (Join-Path $root 'src\Humanizer.ps1')
 . (Join-Path $root 'src\ClickEngine.ps1')
+. (Join-Path $root 'src\TurboEngine.ps1')
 
 # --- Motoru olustur ---
 $engine = New-ClickEngine
+$script:turboMode = $false
+$script:turboThread = $null
 
 # ================== TEMA (pastel, sevimli) ==================
 $cBg      = [System.Drawing.Color]::FromArgb(255, 233, 241)   # yumusak pembe arka plan
@@ -114,7 +117,7 @@ function Add-LabeledNumeric {
 # ================== FORM ==================
 $form               = New-Object System.Windows.Forms.Form
 $form.Text          = "Bongo Cat Auto Clicker"
-$form.ClientSize    = New-Object System.Drawing.Size(412, 690)
+$form.ClientSize    = New-Object System.Drawing.Size(412, 750)
 $form.StartPosition = "CenterScreen"
 $form.FormBorderStyle = "FixedSingle"
 $form.MaximizeBox   = $false
@@ -154,7 +157,7 @@ $intervalBox = Add-LabeledNumeric $grpSpeed "Temel aralik (ms):" 38 1 600000 $en
 $varianceBox = Add-LabeledNumeric $grpSpeed "Hiz degiskenligi (%):" 70 0 90 $engine.Settings.VariancePercent 5
 
 # --- KART 2: Insan Benzeri Davranis ---
-$grpHuman = New-Card $form 18 234 376 196 "🐾 Insan Benzeri Davranis (Anti-Ban)"
+$grpHuman = New-Card $form 18 234 376 232 "🐾 Insan Benzeri Davranis (Anti-Ban)"
 $humanCheck          = New-Object System.Windows.Forms.CheckBox
 $humanCheck.Text     = "Insansi mod (onerilir)"
 $humanCheck.Font     = New-Object System.Drawing.Font($fUI, 9, [System.Drawing.FontStyle]::Bold)
@@ -170,8 +173,18 @@ $holdMinBox  = Add-LabeledNumeric $grpHuman "Basili tutma min (ms):"  98 0 1000 
 $holdMaxBox  = Add-LabeledNumeric $grpHuman "Basili tutma maks (ms):" 130 0 1000 $engine.Settings.HoldMaxMs 5
 $breakBox    = Add-LabeledNumeric $grpHuman "Mola olasiligi (%):" 162 0 100 ([decimal]($engine.Settings.MicroBreakChance * 100)) 1
 
+$turboCheck          = New-Object System.Windows.Forms.CheckBox
+$turboCheck.Text     = "⚡ TURBO MOD (1000+ CPS, insansi mod kapat)"
+$turboCheck.Font     = New-Object System.Drawing.Font($fUI, 9, [System.Drawing.FontStyle]::Bold)
+$turboCheck.ForeColor = [System.Drawing.Color]::FromArgb(255, 140, 0)
+$turboCheck.BackColor = $cCard
+$turboCheck.Location = New-Object System.Drawing.Point(18, 198)
+$turboCheck.Size     = New-Object System.Drawing.Size(340, 24)
+$turboCheck.Checked  = $false
+$grpHuman.Controls.Add($turboCheck)
+
 # --- KART 3: Tiklama Secenekleri ---
-$grpClick = New-Card $form 18 440 376 102 "🐾 Tiklama Secenekleri"
+$grpClick = New-Card $form 18 476 376 102 "🐾 Tiklama Secenekleri"
 $btnTypeLabel          = New-Object System.Windows.Forms.Label
 $btnTypeLabel.Text     = "Fare tusu:"
 $btnTypeLabel.Font     = New-Object System.Drawing.Font($fUI, 9)
@@ -199,7 +212,7 @@ $repeatBox = Add-LabeledNumeric $grpClick "Tekrar (0 = sinirsiz):" 70 0 10000000
 # --- Baslat / Durdur (yuvarlak buton) ---
 $toggleBtn          = New-Object System.Windows.Forms.Button
 $toggleBtn.Text     = "▶  BASLAT  (F6)"
-$toggleBtn.Location = New-Object System.Drawing.Point(18, 556)
+$toggleBtn.Location = New-Object System.Drawing.Point(18, 592)
 $toggleBtn.Size     = New-Object System.Drawing.Size(376, 56)
 $toggleBtn.Font     = New-Object System.Drawing.Font($fUI, 13, [System.Drawing.FontStyle]::Bold)
 $toggleBtn.BackColor = $cGo
@@ -214,7 +227,7 @@ $form.Controls.Add($toggleBtn)
 $statusLabel          = New-Object System.Windows.Forms.Label
 $statusLabel.Text     = "💤 Durum: DURDU"
 $statusLabel.Font     = New-Object System.Drawing.Font($fUI, 11, [System.Drawing.FontStyle]::Bold)
-$statusLabel.Location = New-Object System.Drawing.Point(0, 622)
+$statusLabel.Location = New-Object System.Drawing.Point(0, 658)
 $statusLabel.Size     = New-Object System.Drawing.Size(412, 24)
 $statusLabel.TextAlign = "MiddleCenter"
 $statusLabel.ForeColor = $cStopTxt
@@ -224,7 +237,7 @@ $countLabel          = New-Object System.Windows.Forms.Label
 $countLabel.Text     = "🐾 Tiklama: 0"
 $countLabel.Font     = New-Object System.Drawing.Font($fUI, 10)
 $countLabel.ForeColor = $cText
-$countLabel.Location = New-Object System.Drawing.Point(0, 648)
+$countLabel.Location = New-Object System.Drawing.Point(0, 684)
 $countLabel.Size     = New-Object System.Drawing.Size(412, 22)
 $countLabel.TextAlign = "MiddleCenter"
 $form.Controls.Add($countLabel)
@@ -232,7 +245,7 @@ $form.Controls.Add($countLabel)
 $infoLabel          = New-Object System.Windows.Forms.Label
 $infoLabel.Text     = "F6 = baslat/durdur  •  imleci hedefe getirip basin"
 $infoLabel.Font     = New-Object System.Drawing.Font($fUI, 8)
-$infoLabel.Location = New-Object System.Drawing.Point(0, 670)
+$infoLabel.Location = New-Object System.Drawing.Point(0, 706)
 $infoLabel.Size     = New-Object System.Drawing.Size(412, 18)
 $infoLabel.TextAlign = "MiddleCenter"
 $infoLabel.ForeColor = [System.Drawing.Color]::FromArgb(180, 150, 160)
@@ -263,7 +276,6 @@ function Update-HumanControlsEnabled {
 
 function Set-Running {
     param([bool]$state)
-    $engine.Running = $state
     if ($state) {
         Sync-SettingsFromUI
         $catLabel.Text         = "😸  🎵"
@@ -272,36 +284,65 @@ function Set-Running {
         $toggleBtn.Text        = "⏸  DURDUR  (F6)"
         $toggleBtn.BackColor   = $cStop
         $toggleBtn.Tag         = "stop"
-        $clickTimer.Interval   = 1
-        $clickTimer.Start()
+
+        if ([bool]$turboCheck.Checked) {
+            $script:turboMode = $true
+            $cps = 1000
+            $limit = [int]$repeatBox.Value
+            $btn = if ($typeBox.SelectedItem -eq "Sag") { 'Right' } else { 'Left' }
+            Start-Turbo -Button $btn -Cps $cps -Limit $limit
+            $clickTimer.Start()
+        } else {
+            $script:turboMode = $false
+            $engine.Running = $true
+            $clickTimer.Interval = 1
+            $clickTimer.Start()
+        }
     } else {
+        if ($script:turboMode) {
+            Stop-Turbo
+        } else {
+            $engine.Running = $false
+            $clickTimer.Stop()
+        }
+        $script:turboMode = $false
         $catLabel.Text         = "🐱  💤"
         $statusLabel.Text      = "💤 Durum: DURDU"
         $statusLabel.ForeColor = $cStopTxt
         $toggleBtn.Text        = "▶  BASLAT  (F6)"
         $toggleBtn.BackColor   = $cGo
         $toggleBtn.Tag         = "go"
-        $clickTimer.Stop()
         $pawLabel.Text         = "🐾 . . . . . 🐾"
     }
 }
 
-# Tiklama zamanlayicisi
+# Tiklama zamanlayicisi (normal mod) / sayac timer'i (turbo mod)
 $clickTimer          = New-Object System.Windows.Forms.Timer
-$clickTimer.Interval = 100
+$clickTimer.Interval = 50
 $clickTimer.Add_Tick({
-    if (-not $engine.Running) { return }
-    Sync-SettingsFromUI
-    Invoke-EngineClick -Engine $engine
-    $countLabel.Text = "🐾 Tiklama: $($engine.ClickCount)"
-    if ($pawLabel.Text -eq "🐾 . . . . . 🐾") { $pawLabel.Text = "🐾 ✦ ✦ ✦ 🐾" }
-    else { $pawLabel.Text = "🐾 . . . . . 🐾" }
-    if (Test-EngineLimitReached -Engine $engine) {
-        Set-Running $false
-        [System.Media.SystemSounds]::Asterisk.Play()
-        return
+    if ($script:turboMode) {
+        if (Test-TurboRunning) {
+            $cnt = Get-TurboCount
+            $countLabel.Text = "🐾 Tiklama: $cnt"
+            if ($pawLabel.Text -eq "🐾 . . . . . 🐾") { $pawLabel.Text = "🐾 ✦ ✦ ✦ 🐾" }
+            else { $pawLabel.Text = "🐾 . . . . . 🐾" }
+        } else {
+            Set-Running $false
+            [System.Media.SystemSounds]::Asterisk.Play()
+        }
+    } elseif ($engine.Running) {
+        Sync-SettingsFromUI
+        Invoke-EngineClick -Engine $engine
+        $countLabel.Text = "🐾 Tiklama: $($engine.ClickCount)"
+        if ($pawLabel.Text -eq "🐾 . . . . . 🐾") { $pawLabel.Text = "🐾 ✦ ✦ ✦ 🐾" }
+        else { $pawLabel.Text = "🐾 . . . . . 🐾" }
+        if (Test-EngineLimitReached -Engine $engine) {
+            Set-Running $false
+            [System.Media.SystemSounds]::Asterisk.Play()
+            return
+        }
+        $clickTimer.Interval = Get-EngineNextDelay -Engine $engine
     }
-    $clickTimer.Interval = Get-EngineNextDelay -Engine $engine
 })
 
 # Global kisayol (F6)
@@ -325,7 +366,19 @@ $toggleBtn.Add_MouseLeave({
     if ($toggleBtn.Tag -eq "stop") { $toggleBtn.BackColor = $cStop } else { $toggleBtn.BackColor = $cGo }
 })
 $humanCheck.Add_CheckedChanged({ Update-HumanControlsEnabled })
-$form.Add_FormClosing({ $clickTimer.Stop(); $hotkeyTimer.Stop() })
+$turboCheck.Add_CheckedChanged({
+    if ($turboCheck.Checked) {
+        $humanCheck.Checked = $false
+        $humanCheck.Enabled = $false
+    } else {
+        $humanCheck.Enabled = $true
+    }
+})
+$form.Add_FormClosing({
+    $clickTimer.Stop()
+    $hotkeyTimer.Stop()
+    Stop-Turbo
+})
 
 $toggleBtn.Tag = "go"
 Update-HumanControlsEnabled
