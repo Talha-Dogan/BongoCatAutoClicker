@@ -1,4 +1,4 @@
-# ============================================================
+﻿# ============================================================
 #  Localization.ps1
 #  Sorumluluk (SRP): Dil desteği (11 dil)
 #  Languages: English, Turkish, Chinese, Hindi, Spanish, French,
@@ -28,10 +28,13 @@ $script:strings = @{
         "STATUS_RUNNING" = "😸 Status: RUNNING"
         "STATUS_STOPPED" = "💤 Status: STOPPED"
         "CLICK_COUNT" = "🐾 Clicks: "
+        "MOUSE_LEFT" = "Left"
+        "MOUSE_RIGHT" = "Right"
+        "INFO_TEXT" = "F6 = start/stop  •  move cursor to target and press"
     }
     "TR" = @{
         "TITLE" = "Bongo Cat Auto Clicker"
-        "GRP_SPEED" = "🐾 Tiklama Hızı"
+        "GRP_SPEED" = "🐾 Tıklama Hızı"
         "GRP_HUMAN" = "🐾 İnsansı Davranış (Anti-Ban)"
         "GRP_CLICK" = "🐾 Tıklama Seçenekleri"
         "BASE_INTERVAL" = "Temel aralık (ms):"
@@ -48,7 +51,10 @@ $script:strings = @{
         "BTN_STOP" = "⏸  DURDUR  (F6)"
         "STATUS_RUNNING" = "😸 Durum: ÇALIŞIYOR"
         "STATUS_STOPPED" = "💤 Durum: DURDU"
-        "CLICK_COUNT" = "🐾 Tiklama: "
+        "CLICK_COUNT" = "🐾 Tıklama: "
+        "MOUSE_LEFT" = "Sol"
+        "MOUSE_RIGHT" = "Sağ"
+        "INFO_TEXT" = "F6 = başlat/durdur  •  imleci hedefe getirip bas"
     }
     "ZH" = @{
         "TITLE" = "猫咪自动点击器"
@@ -70,6 +76,9 @@ $script:strings = @{
         "STATUS_RUNNING" = "😸 状态: 运行中"
         "STATUS_STOPPED" = "💤 状态: 已停止"
         "CLICK_COUNT" = "🐾 点击: "
+        "MOUSE_LEFT" = "左键"
+        "MOUSE_RIGHT" = "右键"
+        "INFO_TEXT" = "F6 = 开始/停止  •  将光标移到目标处并按下"
     }
     "HI" = @{
         "TITLE" = "बिल्ली ऑटो क्लिकर"
@@ -91,6 +100,9 @@ $script:strings = @{
         "STATUS_RUNNING" = "😸 स्थिति: चल रहा है"
         "STATUS_STOPPED" = "💤 स्थिति: रुका हुआ"
         "CLICK_COUNT" = "🐾 क्लिक: "
+        "MOUSE_LEFT" = "बायाँ"
+        "MOUSE_RIGHT" = "दायाँ"
+        "INFO_TEXT" = "F6 = शुरू/रोकें  •  कर्सर को लक्ष्य पर ले जाएं और दबाएं"
     }
     "ES" = @{
         "TITLE" = "Gato Clicker Automático"
@@ -112,6 +124,9 @@ $script:strings = @{
         "STATUS_RUNNING" = "😸 Estado: EN EJECUCIÓN"
         "STATUS_STOPPED" = "💤 Estado: DETENIDO"
         "CLICK_COUNT" = "🐾 Clics: "
+        "MOUSE_LEFT" = "Izquierdo"
+        "MOUSE_RIGHT" = "Derecho"
+        "INFO_TEXT" = "F6 = iniciar/detener  •  mueva el cursor al objetivo y presione"
     }
     "FR" = @{
         "TITLE" = "Chaton Cliqueur Automatique"
@@ -133,6 +148,9 @@ $script:strings = @{
         "STATUS_RUNNING" = "😸 Statut: EN COURS"
         "STATUS_STOPPED" = "💤 Statut: ARRÊTÉ"
         "CLICK_COUNT" = "🐾 Clics: "
+        "MOUSE_LEFT" = "Gauche"
+        "MOUSE_RIGHT" = "Droit"
+        "INFO_TEXT" = "F6 = démarrer/arrêter  •  placez le curseur sur la cible et appuyez"
     }
     "AR" = @{
         "TITLE" = "قاذف الماوس التلقائي"
@@ -154,9 +172,12 @@ $script:strings = @{
         "STATUS_RUNNING" = "😸 الحالة: قيد التشغيل"
         "STATUS_STOPPED" = "💤 الحالة: متوقف"
         "CLICK_COUNT" = "🐾 النقرات: "
+        "MOUSE_LEFT" = "يسار"
+        "MOUSE_RIGHT" = "يمين"
+        "INFO_TEXT" = "F6 = تشغيل/إيقاف  •  حرّك المؤشر إلى الهدف واضغط"
     }
     "BN" = @{
-        "TITLE" = "বিড়াল স্বয়ংক্লিয় ক্লিকার"
+        "TITLE" = "বিড়াল স্বয়ংক্রিয় ক্লিকার"
         "GRP_SPEED" = "🐾 ক্লিক গতি"
         "GRP_HUMAN" = "🐾 মানব-সদৃশ আচরণ (এন্টি-বান)"
         "GRP_CLICK" = "🐾 ক্লিক বিকল্প"
@@ -175,6 +196,9 @@ $script:strings = @{
         "STATUS_RUNNING" = "😸 অবস্থা: চলমান"
         "STATUS_STOPPED" = "💤 অবস্থা: বন্ধ"
         "CLICK_COUNT" = "🐾 ক্লিক: "
+        "MOUSE_LEFT" = "বাম"
+        "MOUSE_RIGHT" = "ডান"
+        "INFO_TEXT" = "F6 = শুরু/বন্ধ  •  কার্সার লক্ষ্যে নিয়ে চাপুন"
     }
     "PT" = @{
         "TITLE" = "Gato Clicker Automático"
@@ -196,6 +220,9 @@ $script:strings = @{
         "STATUS_RUNNING" = "😸 Status: EM EXECUÇÃO"
         "STATUS_STOPPED" = "💤 Status: PARADO"
         "CLICK_COUNT" = "🐾 Cliques: "
+        "MOUSE_LEFT" = "Esquerdo"
+        "MOUSE_RIGHT" = "Direito"
+        "INFO_TEXT" = "F6 = iniciar/parar  •  mova o cursor ao alvo e pressione"
     }
     "RU" = @{
         "TITLE" = "Автокликер с котиком"
@@ -217,9 +244,12 @@ $script:strings = @{
         "STATUS_RUNNING" = "😸 Статус: РАБОТАЕТ"
         "STATUS_STOPPED" = "💤 Статус: ОСТАНОВЛЕН"
         "CLICK_COUNT" = "🐾 Клики: "
+        "MOUSE_LEFT" = "Левая"
+        "MOUSE_RIGHT" = "Правая"
+        "INFO_TEXT" = "F6 = старт/стоп  •  наведите курсор на цель и нажмите"
     }
     "UR" = @{
-        "TITLE" = "بلی کو خودکار کلک کنے والا"
+        "TITLE" = "بلی کو خودکار کلک کرنے والا"
         "GRP_SPEED" = "🐾 کلک کی رفتار"
         "GRP_HUMAN" = "🐾 انسانی رویہ (اینٹی بین)"
         "GRP_CLICK" = "🐾 کلک کے آپشن"
@@ -238,6 +268,9 @@ $script:strings = @{
         "STATUS_RUNNING" = "😸 حالت: چل رہا ہے"
         "STATUS_STOPPED" = "💤 حالت: رکا ہوا"
         "CLICK_COUNT" = "🐾 کلکس: "
+        "MOUSE_LEFT" = "بایاں"
+        "MOUSE_RIGHT" = "دایاں"
+        "INFO_TEXT" = "F6 = شروع/بند  •  کرسر کو ہدف پر لے جائیں اور دبائیں"
     }
 }
 

@@ -28,6 +28,15 @@ $engine = New-ClickEngine
 $script:turboMode = $false
 $script:turboThread = $null
 
+# --- Ceviri kayit sistemi: kontrol -> dil anahtari ---
+# Dil degisince tum kayitli kontroller otomatik guncellenir.
+$script:translatables = New-Object System.Collections.ArrayList
+function Register-Translatable {
+    param($Control, [string]$Key)
+    [void]$script:translatables.Add([pscustomobject]@{ Control = $Control; Key = $Key })
+    $Control.Text = Get-String $Key
+}
+
 # ================== TEMA (pastel, sevimli) ==================
 $cBg      = [System.Drawing.Color]::FromArgb(255, 233, 241)   # yumusak pembe arka plan
 $cCard    = [System.Drawing.Color]::FromArgb(255, 252, 253)   # kart (neredeyse beyaz)
@@ -60,7 +69,7 @@ function New-RoundedPath {
 
 # --- Sevimli yuvarlak kart paneli olustur ---
 function New-Card {
-    param($Parent, [int]$X, [int]$Y, [int]$W, [int]$H, [string]$Title)
+    param($Parent, [int]$X, [int]$Y, [int]$W, [int]$H, [string]$TitleKey)
     $panel          = New-Object System.Windows.Forms.Panel
     $panel.Location = New-Object System.Drawing.Point($X, $Y)
     $panel.Size     = New-Object System.Drawing.Size($W, $H)
@@ -78,27 +87,27 @@ function New-Card {
     $Parent.Controls.Add($panel)
 
     $hdr          = New-Object System.Windows.Forms.Label
-    $hdr.Text     = $Title
     $hdr.Font     = New-Object System.Drawing.Font($fUI, 10, [System.Drawing.FontStyle]::Bold)
     $hdr.ForeColor = $cHeader
     $hdr.BackColor = $cCard
     $hdr.Location = New-Object System.Drawing.Point(16, 10)
     $hdr.Size     = New-Object System.Drawing.Size(($W - 30), 22)
     $panel.Controls.Add($hdr)
+    Register-Translatable $hdr $TitleKey
     return $panel
 }
 
 # --- Etiketli sayisal alan (DRY) ---
 function Add-LabeledNumeric {
-    param($Parent, [string]$Text, [int]$Y, [int]$Min, [int]$Max, [decimal]$Value, [int]$Inc = 1)
+    param($Parent, [string]$LabelKey, [int]$Y, [int]$Min, [int]$Max, [decimal]$Value, [int]$Inc = 1)
     $lbl          = New-Object System.Windows.Forms.Label
-    $lbl.Text     = $Text
     $lbl.Font     = New-Object System.Drawing.Font($fUI, 9)
     $lbl.ForeColor = $cText
     $lbl.BackColor = $cCard
     $lbl.Location = New-Object System.Drawing.Point(18, ($Y + 2))
     $lbl.Size     = New-Object System.Drawing.Size(200, 22)
     $Parent.Controls.Add($lbl)
+    Register-Translatable $lbl $LabelKey
 
     $num          = New-Object System.Windows.Forms.NumericUpDown
     $num.Location = New-Object System.Drawing.Point(225, $Y)
@@ -136,13 +145,13 @@ $catLabel.TextAlign = "MiddleCenter"
 $form.Controls.Add($catLabel)
 
 $titleLabel          = New-Object System.Windows.Forms.Label
-$titleLabel.Text     = "Bongo Cat Auto Clicker"
 $titleLabel.Font     = New-Object System.Drawing.Font($fUI, 15, [System.Drawing.FontStyle]::Bold)
 $titleLabel.ForeColor = $cHeader
 $titleLabel.Location = New-Object System.Drawing.Point(0, 62)
 $titleLabel.Size     = New-Object System.Drawing.Size(412, 30)
 $titleLabel.TextAlign = "MiddleCenter"
 $form.Controls.Add($titleLabel)
+Register-Translatable $titleLabel "TITLE"
 
 $pawLabel          = New-Object System.Windows.Forms.Label
 $pawLabel.Text     = "🐾 . . . . . 🐾"
@@ -183,14 +192,13 @@ $langBox.SelectedIndex = 0  # English default
 $form.Controls.Add($langBox)
 
 # --- KART 1: Tiklama Hizi ---
-$grpSpeed = New-Card $form 18 142 376 102 "🐾 Tiklama Hizi"
-$intervalBox = Add-LabeledNumeric $grpSpeed "Temel aralik (ms):" 38 1 600000 $engine.Settings.BaseIntervalMs 10
-$varianceBox = Add-LabeledNumeric $grpSpeed "Hiz degiskenligi (%):" 70 0 90 $engine.Settings.VariancePercent 5
+$grpSpeed = New-Card $form 18 142 376 102 "GRP_SPEED"
+$intervalBox = Add-LabeledNumeric $grpSpeed "BASE_INTERVAL" 38 1 600000 $engine.Settings.BaseIntervalMs 10
+$varianceBox = Add-LabeledNumeric $grpSpeed "VARIANCE" 70 0 90 $engine.Settings.VariancePercent 5
 
 # --- KART 2: Insan Benzeri Davranis ---
-$grpHuman = New-Card $form 18 254 376 232 "🐾 Insan Benzeri Davranis (Anti-Ban)"
+$grpHuman = New-Card $form 18 254 376 232 "GRP_HUMAN"
 $humanCheck          = New-Object System.Windows.Forms.CheckBox
-$humanCheck.Text     = "Insansi mod (onerilir)"
 $humanCheck.Font     = New-Object System.Drawing.Font($fUI, 9, [System.Drawing.FontStyle]::Bold)
 $humanCheck.ForeColor = $cGoTxt
 $humanCheck.BackColor = $cCard
@@ -198,32 +206,33 @@ $humanCheck.Location = New-Object System.Drawing.Point(18, 36)
 $humanCheck.Size     = New-Object System.Drawing.Size(340, 24)
 $humanCheck.Checked  = $engine.Settings.HumanizeEnabled
 $grpHuman.Controls.Add($humanCheck)
+Register-Translatable $humanCheck "HUMAN_MODE"
 
-$jitterBox   = Add-LabeledNumeric $grpHuman "Imlec sapmasi (piksel):" 66 0 50 $engine.Settings.JitterRadiusPx 1
-$holdMinBox  = Add-LabeledNumeric $grpHuman "Basili tutma min (ms):"  98 0 1000 $engine.Settings.HoldMinMs 5
-$holdMaxBox  = Add-LabeledNumeric $grpHuman "Basili tutma maks (ms):" 130 0 1000 $engine.Settings.HoldMaxMs 5
-$breakBox    = Add-LabeledNumeric $grpHuman "Mola olasiligi (%):" 162 0 100 ([decimal]($engine.Settings.MicroBreakChance * 100)) 1
+$jitterBox   = Add-LabeledNumeric $grpHuman "JITTER" 66 0 50 $engine.Settings.JitterRadiusPx 1
+$holdMinBox  = Add-LabeledNumeric $grpHuman "HOLD_MIN"  98 0 1000 $engine.Settings.HoldMinMs 5
+$holdMaxBox  = Add-LabeledNumeric $grpHuman "HOLD_MAX" 130 0 1000 $engine.Settings.HoldMaxMs 5
+$breakBox    = Add-LabeledNumeric $grpHuman "BREAK_CHANCE" 162 0 100 ([decimal]($engine.Settings.MicroBreakChance * 100)) 1
 
 $turboCheck          = New-Object System.Windows.Forms.CheckBox
-$turboCheck.Text     = "⚡ TURBO MOD (1000+ CPS, insansi mod kapat)"
 $turboCheck.Font     = New-Object System.Drawing.Font($fUI, 9, [System.Drawing.FontStyle]::Bold)
 $turboCheck.ForeColor = [System.Drawing.Color]::FromArgb(255, 140, 0)
 $turboCheck.BackColor = $cCard
 $turboCheck.Location = New-Object System.Drawing.Point(18, 198)
-$turboCheck.Size     = New-Object System.Drawing.Size(340, 24)
+$turboCheck.Size     = New-Object System.Drawing.Size(360, 24)
 $turboCheck.Checked  = $false
 $grpHuman.Controls.Add($turboCheck)
+Register-Translatable $turboCheck "TURBO_MODE"
 
 # --- KART 3: Tiklama Secenekleri ---
-$grpClick = New-Card $form 18 496 376 102 "🐾 Tiklama Secenekleri"
+$grpClick = New-Card $form 18 496 376 102 "GRP_CLICK"
 $btnTypeLabel          = New-Object System.Windows.Forms.Label
-$btnTypeLabel.Text     = "Fare tusu:"
 $btnTypeLabel.Font     = New-Object System.Drawing.Font($fUI, 9)
 $btnTypeLabel.ForeColor = $cText
 $btnTypeLabel.BackColor = $cCard
 $btnTypeLabel.Location = New-Object System.Drawing.Point(18, 40)
 $btnTypeLabel.Size     = New-Object System.Drawing.Size(200, 22)
 $grpClick.Controls.Add($btnTypeLabel)
+Register-Translatable $btnTypeLabel "MOUSE_BUTTON"
 
 $typeBox          = New-Object System.Windows.Forms.ComboBox
 $typeBox.Location = New-Object System.Drawing.Point(225, 38)
@@ -233,12 +242,12 @@ $typeBox.FlatStyle = "Flat"
 $typeBox.BackColor = $cInput
 $typeBox.ForeColor = $cText
 $typeBox.Font     = New-Object System.Drawing.Font($fUI, 9)
-[void]$typeBox.Items.Add("Sol")
-[void]$typeBox.Items.Add("Sag")
+[void]$typeBox.Items.Add((Get-String "MOUSE_LEFT"))
+[void]$typeBox.Items.Add((Get-String "MOUSE_RIGHT"))
 $typeBox.SelectedIndex = 0
 $grpClick.Controls.Add($typeBox)
 
-$repeatBox = Add-LabeledNumeric $grpClick "Tekrar (0 = sinirsiz):" 70 0 10000000 $engine.Settings.RepeatLimit 10
+$repeatBox = Add-LabeledNumeric $grpClick "REPEAT" 70 0 10000000 $engine.Settings.RepeatLimit 10
 
 # --- Baslat / Durdur (yuvarlak buton) ---
 $toggleBtn          = New-Object System.Windows.Forms.Button
@@ -286,7 +295,7 @@ $form.Controls.Add($infoLabel)
 
 function Sync-SettingsFromUI {
     $s = $engine.Settings
-    $s.ButtonType       = if ($typeBox.SelectedItem -eq "Sag") { 'Right' } else { 'Left' }
+    $s.ButtonType       = if ($typeBox.SelectedIndex -eq 1) { 'Right' } else { 'Left' }
     $s.BaseIntervalMs   = [int]$intervalBox.Value
     $s.VariancePercent  = [double]$varianceBox.Value
     $s.JitterRadiusPx   = [int]$jitterBox.Value
@@ -295,6 +304,32 @@ function Sync-SettingsFromUI {
     $s.MicroBreakChance = [double]$breakBox.Value / 100.0
     $s.RepeatLimit      = [int]$repeatBox.Value
     $s.HumanizeEnabled  = [bool]$humanCheck.Checked
+}
+
+# Dil degisince tum arayuzu guncelle
+function Update-UILanguage {
+    # Kayitli sabit etiketler (kart basliklari, alan etiketleri, checkbox'lar)
+    foreach ($t in $script:translatables) {
+        $t.Control.Text = Get-String $t.Key
+    }
+    # Form basligi
+    $form.Text = "😊 $(Get-String 'TITLE')"
+    # Fare tusu listesi (secimi koru)
+    $sel = $typeBox.SelectedIndex
+    $typeBox.Items.Clear()
+    [void]$typeBox.Items.Add((Get-String "MOUSE_LEFT"))
+    [void]$typeBox.Items.Add((Get-String "MOUSE_RIGHT"))
+    $typeBox.SelectedIndex = [Math]::Max(0, $sel)
+    # Duruma bagli dinamik etiketler
+    if ($engine.Running -or $script:turboMode) {
+        $toggleBtn.Text   = Get-String 'BTN_STOP'
+        $statusLabel.Text = Get-String 'STATUS_RUNNING'
+    } else {
+        $toggleBtn.Text   = Get-String 'BTN_START'
+        $statusLabel.Text = Get-String 'STATUS_STOPPED'
+    }
+    $countLabel.Text = "$(Get-String 'CLICK_COUNT')$($engine.ClickCount)"
+    $infoLabel.Text  = Get-String 'INFO_TEXT'
 }
 
 function Update-HumanControlsEnabled {
@@ -310,9 +345,9 @@ function Set-Running {
     if ($state) {
         Sync-SettingsFromUI
         $catLabel.Text         = "😸  🎵"
-        $statusLabel.Text      = "😸 Durum: CALISIYOR"
+        $statusLabel.Text      = Get-String 'STATUS_RUNNING'
         $statusLabel.ForeColor = $cGoTxt
-        $toggleBtn.Text        = "⏸  DURDUR  (F6)"
+        $toggleBtn.Text        = Get-String 'BTN_STOP'
         $toggleBtn.BackColor   = $cStop
         $toggleBtn.Tag         = "stop"
 
@@ -333,9 +368,9 @@ function Set-Running {
         $clickTimer.Stop()
         Disable-TurboMode -ClickTimer $clickTimer
         $catLabel.Text         = "🐱  💤"
-        $statusLabel.Text      = "💤 Durum: DURDU"
+        $statusLabel.Text      = Get-String 'STATUS_STOPPED'
         $statusLabel.ForeColor = $cStopTxt
-        $toggleBtn.Text        = "▶  BASLAT  (F6)"
+        $toggleBtn.Text        = Get-String 'BTN_START'
         $toggleBtn.BackColor   = $cGo
         $toggleBtn.Tag         = "go"
         $pawLabel.Text         = "🐾 . . . . . 🐾"
@@ -346,10 +381,23 @@ function Set-Running {
 $clickTimer          = New-Object System.Windows.Forms.Timer
 $clickTimer.Interval = 50
 $clickTimer.Add_Tick({
-    if ($engine.Running) {
+    if (-not $engine.Running) { return }
+
+    if ($script:turboMode) {
+        # Turbo: her tikte bir grup ham tiklama (yuksek CPS)
+        $reached = Invoke-TurboBurst -Engine $engine
+        $countLabel.Text = "$(Get-String 'CLICK_COUNT')$($engine.ClickCount)"
+        if ($pawLabel.Text -eq "🐾 . . . . . 🐾") { $pawLabel.Text = "🐾 ✦ ✦ ✦ 🐾" }
+        else { $pawLabel.Text = "🐾 . . . . . 🐾" }
+        if ($reached) {
+            Set-Running $false
+            [System.Media.SystemSounds]::Asterisk.Play()
+        }
+    } else {
+        # Normal: insansi tek tiklama
         Sync-SettingsFromUI
         Invoke-EngineClick -Engine $engine
-        $countLabel.Text = "🐾 Tiklama: $($engine.ClickCount)"
+        $countLabel.Text = "$(Get-String 'CLICK_COUNT')$($engine.ClickCount)"
         if ($pawLabel.Text -eq "🐾 . . . . . 🐾") { $pawLabel.Text = "🐾 ✦ ✦ ✦ 🐾" }
         else { $pawLabel.Text = "🐾 . . . . . 🐾" }
         if (Test-EngineLimitReached -Engine $engine) {
@@ -357,9 +405,7 @@ $clickTimer.Add_Tick({
             [System.Media.SystemSounds]::Asterisk.Play()
             return
         }
-        if (-not $script:turboMode) {
-            $clickTimer.Interval = Get-EngineNextDelay -Engine $engine
-        }
+        $clickTimer.Interval = Get-EngineNextDelay -Engine $engine
     }
 })
 
@@ -381,14 +427,7 @@ $langCodes = @("EN", "TR", "ZH", "HI", "ES", "FR", "AR", "BN", "PT", "RU", "UR")
 $langBox.Add_SelectedIndexChanged({
     if ($langBox.SelectedIndex -ge 0 -and $langBox.SelectedIndex -lt $langCodes.Count) {
         Set-Language $langCodes[$langBox.SelectedIndex]
-
-        # Tüm UI string'lerini güncelle
-        $form.Text = "😊 $(Get-String 'TITLE')"
-        $titleLabel.Text = Get-String 'TITLE'
-        $toggleBtn.Text = if ($engine.Running) { Get-String 'BTN_STOP' } else { Get-String 'BTN_START' }
-        $statusLabel.Text = if ($engine.Running) { Get-String 'STATUS_RUNNING' } else { Get-String 'STATUS_STOPPED' }
-        $countLabel.Text = "$(Get-String 'CLICK_COUNT')$($engine.ClickCount)"
-        $infoLabel.Text = "F6 = $(Get-String 'BTN_START')"
+        Update-UILanguage
     }
 })
 
@@ -415,37 +454,6 @@ $form.Add_FormClosing({
 
 $toggleBtn.Tag = "go"
 Update-HumanControlsEnabled
+Update-UILanguage   # baslangic dilini (EN) tum dinamik etiketlere uygula
 [void]$form.ShowDialog()
 
-# SIG # Begin signature block
-# MIIFgwYJKoZIhvcNAQcCoIIFdDCCBXACAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
-# gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUYM9J1quc4PDxZmAJiBTqo84U
-# SpagggMhMIIDHTCCAgWgAwIBAgIQKDhswI3fToJKjstkm3OLJzANBgkqhkiG9w0B
-# AQsFADAXMRUwEwYDVQQDDAxUYWxoYSBEb8SfYW4wHhcNMjYwNjE3MTYxNDM5WhcN
-# MjcwNjE3MTYzNDM5WjAXMRUwEwYDVQQDDAxUYWxoYSBEb8SfYW4wggEiMA0GCSqG
-# SIb3DQEBAQUAA4IBDwAwggEKAoIBAQDNIGM4RJcXcREY6X1rzl67uGeUxVJA/YUV
-# tE33WO5AEGlw7CXYzs/dUYeDP2MEgRU08XPW0K0P1F9k5MIbGb6Mw8pQIfyo8sy1
-# BP+on7tReta8IsHXx9mVz0UF8C+eumgy9JSqY/Nm5LOaNN7oWeX7pmIGbpVEjPJC
-# w+UlvY0An/eVMzKksH2KiiWpAbooQkxoBIQjACaxJIWeeEy3xQHBiBC4gHTALR8G
-# 4QD8cNaNsw7STtRVI1YhVcVJhRjHCvM2tMHKEmxe8FKc09K5SA5eyScIT8UTPW9S
-# p4MnRCdUOQK13lgs13dlqkgtFoaxnjmX9e9NDR3ccOkb46EjkhAhAgMBAAGjZTBj
-# MA4GA1UdDwEB/wQEAwIHgDATBgNVHSUEDDAKBggrBgEFBQcDAzAdBgNVHREEFjAU
-# ghJ4bi0tdGFsaGEgZG9hbi1ocGIwHQYDVR0OBBYEFCUfwmMhsFphVW+CWsyNBFxW
-# 322kMA0GCSqGSIb3DQEBCwUAA4IBAQAAS+NZsF/VpjSinxuNNSafEDdmy1OlK6+H
-# Wj8mpykpuLuZvz/ImNIl0Jt3bsEVOORcpHPKSm7sYK9+6qb9dlgUpTFtqvPh18Ep
-# X4vw4WMx4SW7Wh8ab5YmRrOlHuD/vHv7QwAO162K9hu69EoBo25SLYSyeabz6JjF
-# VKpDOhs5mUeiUh/tGlKyUy4SUzlaGPQjE+t6pdkFd0bsiGO5ZVblq6tAXlAuJC9y
-# v6fXLTqUdJHSWdq9v6abH9aacLKLcTMMJLuDlxGBv72jbUTmE2yJRKA4IAs0KQNy
-# nSod5TgN+wrQPpUGAJ34FVljhfZXu2ufJX0t4V9YO9ZtfzjfJ6/DMYIBzDCCAcgC
-# AQEwKzAXMRUwEwYDVQQDDAxUYWxoYSBEb8SfYW4CECg4bMCN306CSo7LZJtziycw
-# CQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKECgAAwGQYJKoZIhvcN
-# AQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwGCisGAQQBgjcCARUw
-# IwYJKoZIhvcNAQkEMRYEFF6jvxSoD11Uhn39I4AaLkN9gxViMA0GCSqGSIb3DQEB
-# AQUABIIBALmJNqmI0eYvscK6xfZES3/MWx0cH2JM5BA+/nF1061ru4LSJvpFlW/v
-# lpycjy/5VE4aFjZV4tMHhxBY6qsKkPub/iJYEQ1gp6/P4pJIK2CfSbQsZiMonX6o
-# BJcX/toeqjETFXP3SQtwCGcV8eTrAL2L4EEy4CDW/5GECTHU8A0XSBWcfUZ0voWk
-# Mn2nWAJ2Lym0y0MwqX+TcFdOCS7EVxrh3xTlmrQfYc0/Tk2IfkfSfsUmtqXSY/oA
-# wsK7/+GA7w+AKwIYU3/epAzTbNSs3DfeWlpS3fmCYJAEy7mxZyHSrFBYM3t9HUNX
-# b6iSt3JCy0JvJEraijpwdV6+oXsjyV8=
-# SIG # End signature block
