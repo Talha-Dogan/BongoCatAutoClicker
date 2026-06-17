@@ -1,0 +1,19 @@
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Editor / IDE
+.vs/
+.vscode/
+*.suo
+*.user
+
+# Local Claude settings
+.claude/
+
+# Logs / temp
+*.log
+*.tmp
