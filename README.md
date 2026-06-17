@@ -31,6 +31,7 @@ This software is provided for **educational and personal use** (e.g. testing, ac
 - 🔢 Repeat limit (or unlimited) with a completion sound
 - 🎨 Cute pastel Bongo Cat themed UI, live click counter, paw animation, state-reactive emoji
 - 📦 **Zero dependencies** — no Python, no .NET SDK, no admin rights needed to run
+- 🌍 **11 Languages:** English, Türkçe, 中文, हिन्दी, Español, Français, العربية, বাংলা, Português, Русский, اردو
 
 ## 🚀 Quick Start
 
@@ -142,6 +143,7 @@ Bu yazılım **eğitim ve kişisel kullanım** amacıyla sunulur (test, erişile
 - 🔢 Tekrar limiti (veya sınırsız) tamamlanma sesi ile
 - 🎨 Sevimli pastel Bongo Cat teması, canlı tıklama sayacı, pati animasyonu, duruma göre değişen emoji
 - 📦 **Sıfır bağımlılık** — Python, .NET SDK, yönetici hakkı gerekli değil
+- 🌍 **11 Dil:** English, Türkçe, 中文, हिन्दी, Español, Français, العربية, বাংলা, Português, Русский, اردو
 
 ## 🚀 Hızlı Başlangıç
 
