@@ -43,6 +43,25 @@ This software is provided for **educational and personal use** (e.g. testing, ac
 > **If your game runs as administrator:**
 > Right-click `BongoCatAutoClicker.bat` → **Run as administrator**
 
+## 🔒 Windows Security Warning
+
+You may see a **"The publisher could not be verified"** warning when running the `.bat` file. This is **normal and safe** — it appears because the file is unsigned (no commercial certificate). 
+
+**Why it's safe:**
+- ✅ Source code is 100% open on GitHub — inspect it freely
+- ✅ No internet connection needed; no telemetry
+- ✅ Only uses built-in Windows APIs
+- ✅ Community-reviewed
+
+**How to proceed:**
+1. Click **"More info"** (if shown)
+2. Click **"Run anyway"**
+3. App launches normally
+
+**To verify manually:**
+- Right-click `.bat` → Edit → Check the PowerShell code
+- Check [our GitHub](https://github.com/Talha-Dogan/BongoCatAutoClicker) source
+
 ## ⚙️ Settings
 
 | Setting | Description |
@@ -128,6 +147,25 @@ Bu yazılım **eğitim ve kişisel kullanım** amacıyla sunulur (test, erişile
 
 > **Oyun yönetici olarak çalışıyorsa:**
 > `BongoCatAutoClicker.bat` → sağ tık → **Yönetici olarak çalıştır**
+
+## 🔒 Windows Güvenlik Uyarısı
+
+`.bat` dosyasını çalıştırırken **"Yayıncı doğrulanamadı"** uyarısı görebilirsin. Bu **normal ve güvenlidir** — dosya imzasız olduğu için (ticari sertifika yok) gösterilir.
+
+**Neden güvenlidir:**
+- ✅ Kaynak kod tamamen açık GitHub'da — istediğin zaman inspekt et
+- ✅ İnternet bağlantısı gerektirmez; telemetri yok
+- ✅ Sadece yerleşik Windows API'leri kullanır
+- ✅ Toplum tarafından gözden geçirilmiş
+
+**Nasıl devam etmeli:**
+1. **"Daha fazla bilgi"** tıkla (gösterilirse)
+2. **"Yine de çalıştır"** tıkla
+3. Uygulama normal şekilde açılır
+
+**Manuel olarak doğrula:**
+- `.bat` → sağ tık → Düzenle → PowerShell kodunu kontrol et
+- [GitHub](https://github.com/Talha-Dogan/BongoCatAutoClicker) kaynağını kontrol et
 
 ## ⚙️ Ayarlar
 
