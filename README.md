@@ -1,4 +1,4 @@
-﻿# 🐱 Bongo Cat Auto Clicker
+# 🐱 Bongo Cat Auto Clicker
 
 <p align="center">
   <img alt="Platform" src="https://img.shields.io/badge/platform-Windows%2010%20%7C%2011-0078D6?logo=windows">
@@ -11,101 +11,69 @@
   <a href="../../archive/refs/heads/main.zip"><strong>⬇️ Download ZIP</strong></a>
 </p>
 
-A lightweight, **human-like** auto clicker for Windows with a friendly Bongo Cat themed UI.
-**No installation required** — it runs on the PowerShell that already ships with Windows. Just double-click and go.
-
-> Hafif, **insan benzeri** davranan, Bongo Cat temalı bir otomatik tıklayıcı.
-> **Kurulum gerektirmez** — Windows'ta hazır gelen PowerShell ile çalışır. Çift tıkla, hazır.
-
 ---
 
-## ⚠️ Disclaimer / Yasal Uyarı
+# 📖 ENGLISH
 
-**English** — This software is provided for **educational and personal use** (e.g. testing, accessibility, idle/offline games, automating repetitive desktop tasks). Automating input in **online games or third‑party services may violate their Terms of Service** and could lead to account suspension. **You are solely responsible** for how you use this tool. The author provides it "as is" with **no warranty** and accepts **no liability** for any consequences (see [LICENSE](LICENSE)). Do not use it for cheating, fraud, or any unlawful purpose.
+A lightweight, **human-like** auto clicker for Windows with a friendly Bongo Cat themed UI. **No installation required** — it runs on the PowerShell that already ships with Windows. Just double-click and go.
 
-**Türkçe** — Bu yazılım **eğitim ve kişisel kullanım** amacıyla sunulur (test, erişilebilirlik, çevrimdışı/idle oyunlar, tekrarlayan masaüstü işlerini otomatikleştirme vb.). **Çevrimiçi oyunlarda veya üçüncü taraf servislerde** otomasyon kullanmak, ilgili platformun **Kullanım Koşulları'nı ihlal edebilir** ve hesap askıya alınmasına yol açabilir. Aracı **nasıl kullandığınızdan yalnızca siz sorumlusunuz**. Yazılım "olduğu gibi" sunulur; **hiçbir garanti verilmez** ve doğabilecek sonuçlardan yazar **sorumlu tutulamaz** ([LICENSE](LICENSE)). Hile, dolandırıcılık veya yasa dışı amaçlarla kullanmayın.
+## ⚠️ Disclaimer
 
----
+This software is provided for **educational and personal use** (e.g. testing, accessibility, idle/offline games, automating repetitive desktop tasks). Automating input in **online games or third‑party services may violate their Terms of Service** and could lead to account suspension. **You are solely responsible** for how you use this tool. The author provides it "as is" with **no warranty** and accepts **no liability** for any consequences (see [LICENSE](LICENSE)). Do not use it for cheating, fraud, or any unlawful purpose.
 
-## ✨ Features / Özellikler
+## ✨ Features
 
 - 🧠 **Two click modes:**
   - **Normal mode:** Human-like behavior (Gaussian intervals, micro-breaks, hold randomization, cursor jitter) — anti-ban optimization
-  - **⚡ Turbo mode:** 1000+ CPS ultra-fast clicking (high-priority thread, zero delays) — raw speed
+  - **⚡ Turbo mode:** 1000+ CPS ultra-fast clicking (zero delays) — raw speed
 - ⌨️ **Global hotkey `F6`** — start/stop even while the game window is focused
 - 🖱️ Left / right click, clicks at the **current cursor position**
 - 🔢 Repeat limit (or unlimited) with a completion sound
 - 🎨 Cute pastel Bongo Cat themed UI, live click counter, paw animation, state-reactive emoji
 - 📦 **Zero dependencies** — no Python, no .NET SDK, no admin rights needed to run
 
----
+## 🚀 Quick Start
 
-## 🚀 Quick Start / Hızlı Başlangıç
-
-### Download & Run (No Installation Needed)
-1. Click **⬇️ Download .exe** above → **BongoCatAutoClicker.bat** indir
+1. Click **⬇️ Download ZIP** above
 2. Extract `BongoCatAutoClicker-main.zip`
-3. Double-click **`BongoCatAutoClicker.bat`** → app açılır
-4. Adjust settings, move cursor to target, press **`F6`**
+3. Double-click **`BongoCatAutoClicker.bat`**
+4. Move cursor to target, press **`F6`** to start
 5. Press **`F6`** again to stop
 
-> **If game runs as admin:**
+> **If your game runs as administrator:**
 > Right-click `BongoCatAutoClicker.bat` → **Run as administrator**
 
-> **Oyun yönetici olarak çalışıyorsa:**
-> `BongoCatAutoClicker.bat` → sağ tık → **Yönetici olarak çalıştır**
+## ⚙️ Settings
 
-### Requirements / Gereksinimler
-- Windows 10 / 11
-- Built-in PowerShell 5.1 (already installed)
-- No admin rights needed (unless target app requires it)
+| Setting | Description |
+|---------|-------------|
+| **Base interval (ms)** | Average delay between clicks. `100` ≈ 10 clicks/sec |
+| **Speed variance (%)** | Randomness around average (Gaussian). Higher = more human |
+| **Human-like mode** | Enable anti-pattern behavior (recommended) |
+| **Cursor jitter (px)** | Random pixel offset per click (0 = exact spot) |
+| **Hold time min/max (ms)** | How long button is pressed (randomized in range) |
+| **Break chance (%)** | Probability of inserting a longer human-like pause |
+| **Mouse button** | Left or Right click |
+| **Repeat (0 = unlimited)** | Stop after N clicks or run indefinitely |
 
----
+## 🧱 Architecture
 
-## ⚙️ Settings / Ayarlar
-
-| Setting (UI) | Açıklama |
-| --- | --- |
-| **Temel aralık (ms)** | Average delay between clicks. `100` ≈ 10 clicks/sec. |
-| **Hız değişkenliği (%)** | Randomness around the average (Gaussian std-dev). Higher = more human. |
-| **İnsansı mod** | Master toggle for all human-like behavior. Recommended ON. |
-| **İmleç sapması (piksel)** | Random pixel offset around the click point. `0` = click exact spot. |
-| **Basılı tutma min / maks (ms)** | How long the button is held down per click (randomized in this range). |
-| **Mola olasılığı (%)** | Chance per click to insert a longer human-like pause. |
-| **Fare tuşu** | Left (`Sol`) or right (`Sag`) click. |
-| **Tekrar (0 = sınırsız)** | Stop after N clicks (plays a sound), or run until you stop it. |
-
----
-
-## 🧱 Architecture / Mimari
-
-The code follows a clean separation of concerns (SOLID — single responsibility per file):
+Clean separation of concerns (SOLID — single responsibility per file):
 
 ```
-BongoCatAutoClicker.ps1   → UI + composition root (presentation)
+BongoCatAutoClicker.ps1   → UI + composition root
 src/
- ├─ Interop.ps1           → Win32 hardware layer (mouse, key state)            [SRP]
- ├─ Humanizer.ps1         → human-like timing/jitter policy (pure, testable)   [SRP]
- ├─ ClickEngine.ps1       → orchestration: combines Interop + Humanizer       [SRP, DIP]
- └─ TurboEngine.ps1        → high-priority thread for 1000+ CPS ultra-fast     [SRP]
+ ├─ Interop.ps1           → Win32 hardware layer (mouse, key state)
+ ├─ Humanizer.ps1         → human-like timing/jitter (pure functions)
+ ├─ ClickEngine.ps1       → orchestration (combines layers)
+ └─ TurboEngine.ps1        → fast-mode toggle (timer interval control)
 ```
 
-- **Interop** knows only the OS; it has no idea a UI exists.
-- **Humanizer** produces numbers (delays, offsets) and is pure/testable — it never clicks.
-- **ClickEngine** wires hardware + behavior together via injected functions (dependency inversion).
-- **The UI** is just presentation and the place where everything is composed.
+## 🛠️ How Human-Like Timing Works
 
-This makes the timing logic unit-testable and each piece replaceable without touching the others.
+Instead of a fixed interval, the next delay is drawn from a **normal distribution** (Box–Muller) centered on your base interval, with occasional longer "micro-breaks." Hold times and cursor jitter are randomized too. Result: a click stream that looks far less mechanical.
 
----
-
-## 🛠️ How human-like timing works
-
-Instead of a fixed interval, the next delay is drawn from a **normal distribution** (Box–Muller transform) centered on your base interval, clamped to a sane range, with an occasional longer "micro-break." Hold times and a tiny cursor jitter are randomized too. The result is a click stream that looks far less mechanical than a constant-rate clicker.
-
----
-
-## 🔧 Building & Development Summary
+## 🔧 Building & Development
 
 ### Run from Source (No Build Needed)
 ```bash
@@ -114,34 +82,101 @@ cd BongoCatAutoClicker
 BongoCatAutoClicker.bat
 ```
 
-### Build Standalone .exe
-To create a single `.exe` file (no PowerShell visible):
+### Build Standalone .exe (Optional)
+```powershell
+# Install ps2exe (one-time)
+Install-Module ps2exe -Scope CurrentUser -Force
 
-1. **Install PS2EXE** (one-time setup):
-   ```powershell
-   Install-Module ps2exe -Scope CurrentUser -Force
-   ```
+# Compile
+ps2exe -inputFile BongoCatAutoClicker.ps1 -outputFile BongoCatAutoClicker.exe -runtime ps50
+```
 
-2. **Compile**:
-   ```powershell
-   ps2exe -inputFile BongoCatAutoClicker.ps1 -outputFile BongoCatAutoClicker.exe -runtime ps50
-   ```
+## 📄 License
 
-3. Share the `.exe` — it includes all modules bundled.
-
-### Project Structure
-- `BongoCatAutoClicker.ps1` — main UI
-- `BongoCatAutoClicker.bat` — launcher (hides PowerShell window)
-- `src/` — modular engine components (SOLID)
-- `LICENSE`, `README.md` — docs
-
-### Antivirus / Security
-- **VirusTotal**: [Check latest release](../../releases/latest)
-- The tool uses only standard Win32 APIs and Windows.Forms (both built-in)
-- Source is fully transparent — inspect the code before running
+[MIT](LICENSE) © 2026 Talha Doğan
 
 ---
 
-## 📄 License
+---
+
+# 📖 TÜRKÇE
+
+Hafif, **insan benzeri** davranan, Windows için Bongo Cat temalı sevimli bir otomatik tıklayıcı. **Kurulum gerektirmez** — Windows'ta hazır gelen PowerShell ile çalışır. Çift tıkla, hazır.
+
+## ⚠️ Yasal Uyarı
+
+Bu yazılım **eğitim ve kişisel kullanım** amacıyla sunulur (test, erişilebilirlik, çevrimdışı/idle oyunlar, tekrarlayan masaüstü işlerini otomatikleştirme vb.). **Çevrimiçi oyunlarda veya üçüncü taraf servislerde** otomasyon kullanmak, ilgili platformun **Kullanım Koşulları'nı ihlal edebilir** ve hesap askıya alınmasına yol açabilir. Aracı **nasıl kullandığınızdan yalnızca siz sorumlusunuz**. Yazılım "olduğu gibi" sunulur; **hiçbir garanti verilmez** ve doğabilecek sonuçlardan yazar **sorumlu tutulamaz** ([LICENSE](LICENSE)). Hile, dolandırıcılık veya yasa dışı amaçlarla kullanmayın.
+
+## ✨ Özellikler
+
+- 🧠 **İki tıklama modu:**
+  - **Normal mod:** İnsansı davranış (Gauss dağılımlı aralıklar, mikro molalar, değişken basılı tutma, imleç sapması) — anti-ban optimizasyonu
+  - **⚡ Turbo mod:** 1000+ CPS ultra-hızlı tıklama (sıfır gecikme) — saf hız
+- ⌨️ **Global F6 kısayol** — oyun penceresi ön planda olsa bile çalışır
+- 🖱️ Sol / Sağ tık, imlecin **o anki konumuna** tıklar
+- 🔢 Tekrar limiti (veya sınırsız) tamamlanma sesi ile
+- 🎨 Sevimli pastel Bongo Cat teması, canlı tıklama sayacı, pati animasyonu, duruma göre değişen emoji
+- 📦 **Sıfır bağımlılık** — Python, .NET SDK, yönetici hakkı gerekli değil
+
+## 🚀 Hızlı Başlangıç
+
+1. Yukarıdaki **⬇️ ZIP İndir**'e tıkla
+2. `BongoCatAutoClicker-main.zip` dosyasını aç
+3. **`BongoCatAutoClicker.bat`**'a çift tıkla
+4. İmleci hedefe getir, **`F6`**'ya bas (başlat)
+5. **`F6`**'ya tekrar bas (durdur)
+
+> **Oyun yönetici olarak çalışıyorsa:**
+> `BongoCatAutoClicker.bat` → sağ tık → **Yönetici olarak çalıştır**
+
+## ⚙️ Ayarlar
+
+| Ayar | Açıklama |
+|------|----------|
+| **Temel aralık (ms)** | Tıklamalar arası ortalama gecikme. `100` ≈ sn'de 10 tıklama |
+| **Hız değişkenliği (%)** | Ortalama etrafında rastgelelik (Gauss). Yüksek = daha insansı |
+| **İnsansı mod** | Anti-pattern davranışını aç (önerilir) |
+| **İmleç sapması (px)** | Her tıklamada rastgele piksel sapması (0 = tam konum) |
+| **Basılı tutma min/maks (ms)** | Tuş basılı kalma süresi (aralıkta rastgele) |
+| **Mola olasılığı (%)** | Uzun insan benzeri duraklama ekleme ihtimali |
+| **Fare tuşu** | Sol veya Sağ tık |
+| **Tekrar (0 = sınırsız)** | N tıklamadan sonra dur veya sınırsız çalış |
+
+## 🧱 Mimari
+
+Sorumlulukların net ayrılması (SOLID — dosya başına tek sorumluluk):
+
+```
+BongoCatAutoClicker.ps1   → UI + birleştirme noktası
+src/
+ ├─ Interop.ps1           → Win32 donanım katmanı (fare, tuş durumu)
+ ├─ Humanizer.ps1         → İnsansı zamanlama/sapma (saf fonksiyonlar)
+ ├─ ClickEngine.ps1        → Orkestrasyon (katmanları birleştirir)
+ └─ TurboEngine.ps1        → Hızlı mod toggle (timer interval kontrolü)
+```
+
+## 🛠️ İnsansı Zamanlama Nasıl Çalışır
+
+Sabit aralık yerine, bir sonraki gecikme **normal dağılım**dan (Box–Muller) hesaplanır. Ara sıra daha uzun "mikro molalar" eklenir. Basılı tutma süresi ve imleç sapması da rastgeleştirilir. Sonuç: robotik olmayan, doğal görünen bir tıklama akışı.
+
+## 🔧 Derleme & Geliştirme
+
+### Kaynak Koddan Çalıştırma (Derlemeye Gerek Yok)
+```bash
+git clone https://github.com/Talha-Dogan/BongoCatAutoClicker.git
+cd BongoCatAutoClicker
+BongoCatAutoClicker.bat
+```
+
+### Bağımsız .exe Dosyası Oluştur (İsteğe Bağlı)
+```powershell
+# ps2exe kur (bir kez)
+Install-Module ps2exe -Scope CurrentUser -Force
+
+# Derle
+ps2exe -inputFile BongoCatAutoClicker.ps1 -outputFile BongoCatAutoClicker.exe -runtime ps50
+```
+
+## 📄 Lisans
 
 [MIT](LICENSE) © 2026 Talha Doğan
