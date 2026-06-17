@@ -1,26 +1,18 @@
-﻿# ============================================================
+# ============================================================
 #  Localization.ps1
-#  Sorumluluk (SRP): Dil desteği (İngilizce / Türkçe)
+#  Sorumluluk (SRP): Dil desteği (11 dil)
+#  Languages: English, Turkish, Chinese, Hindi, Spanish, French,
+#             Arabic, Bengali, Portuguese, Russian, Urdu
 # ============================================================
 
 $script:lang = "EN"  # Default language
 
 $script:strings = @{
     "EN" = @{
-        # Başlık ve genel
         "TITLE" = "Bongo Cat Auto Clicker"
-        "EMOJI_CAT" = "🐱"
-        "EMOJI_MII" = "😊"
-        "EMOJI_PAW" = "🐾"
-        "EMOJI_MUSIC" = "🎵"
-        "EMOJI_TURBO" = "⚡"
-
-        # Gruplar
         "GRP_SPEED" = "🐾 Click Speed"
         "GRP_HUMAN" = "🐾 Human-Like Behavior (Anti-Ban)"
         "GRP_CLICK" = "🐾 Click Options"
-
-        # Ayarlar
         "BASE_INTERVAL" = "Base interval (ms):"
         "VARIANCE" = "Speed variance (%):"
         "HUMAN_MODE" = "Human-like mode (recommended)"
@@ -31,36 +23,17 @@ $script:strings = @{
         "TURBO_MODE" = "⚡ TURBO MODE (1000+ CPS)"
         "MOUSE_BUTTON" = "Mouse button:"
         "REPEAT" = "Repeat (0 = unlimited):"
-
-        # Butonlar
         "BTN_START" = "▶  START  (F6)"
         "BTN_STOP" = "⏸  STOP  (F6)"
-
-        # Durum
         "STATUS_RUNNING" = "😸 Status: RUNNING"
         "STATUS_STOPPED" = "💤 Status: STOPPED"
         "CLICK_COUNT" = "🐾 Clicks: "
-        "INFO_TEXT" = "F6 = start/stop  •  move cursor to target and press"
-
-        # Dil seçimi
-        "LANGUAGE" = "Language:"
     }
-
     "TR" = @{
-        # Başlık ve genel
         "TITLE" = "Bongo Cat Auto Clicker"
-        "EMOJI_CAT" = "🐱"
-        "EMOJI_MII" = "😊"
-        "EMOJI_PAW" = "🐾"
-        "EMOJI_MUSIC" = "🎵"
-        "EMOJI_TURBO" = "⚡"
-
-        # Gruplar
         "GRP_SPEED" = "🐾 Tiklama Hızı"
         "GRP_HUMAN" = "🐾 İnsansı Davranış (Anti-Ban)"
         "GRP_CLICK" = "🐾 Tıklama Seçenekleri"
-
-        # Ayarlar
         "BASE_INTERVAL" = "Temel aralık (ms):"
         "VARIANCE" = "Hız değişkenliği (%):"
         "HUMAN_MODE" = "İnsansı mod (önerilir)"
@@ -71,19 +44,200 @@ $script:strings = @{
         "TURBO_MODE" = "⚡ TURBO MOD (1000+ CPS)"
         "MOUSE_BUTTON" = "Fare tuşu:"
         "REPEAT" = "Tekrar (0 = sınırsız):"
-
-        # Butonlar
         "BTN_START" = "▶  BAŞLAT  (F6)"
         "BTN_STOP" = "⏸  DURDUR  (F6)"
-
-        # Durum
         "STATUS_RUNNING" = "😸 Durum: ÇALIŞIYOR"
         "STATUS_STOPPED" = "💤 Durum: DURDU"
         "CLICK_COUNT" = "🐾 Tiklama: "
-        "INFO_TEXT" = "F6 = başlat/durdur  •  imleci hedefe getirip bas"
-
-        # Dil seçimi
-        "LANGUAGE" = "Dil:"
+    }
+    "ZH" = @{
+        "TITLE" = "猫咪自动点击器"
+        "GRP_SPEED" = "🐾 点击速度"
+        "GRP_HUMAN" = "🐾 类似人类的行为 (反封禁)"
+        "GRP_CLICK" = "🐾 点击选项"
+        "BASE_INTERVAL" = "基础间隔 (毫秒):"
+        "VARIANCE" = "速度变化 (%):"
+        "HUMAN_MODE" = "类似人类模式 (推荐)"
+        "JITTER" = "光标抖动 (像素):"
+        "HOLD_MIN" = "按住时间最少 (毫秒):"
+        "HOLD_MAX" = "按住时间最多 (毫秒):"
+        "BREAK_CHANCE" = "休息概率 (%):"
+        "TURBO_MODE" = "⚡ 超速模式 (1000+ CPS)"
+        "MOUSE_BUTTON" = "鼠标按钮:"
+        "REPEAT" = "重复 (0 = 无限):"
+        "BTN_START" = "▶  开始  (F6)"
+        "BTN_STOP" = "⏸  停止  (F6)"
+        "STATUS_RUNNING" = "😸 状态: 运行中"
+        "STATUS_STOPPED" = "💤 状态: 已停止"
+        "CLICK_COUNT" = "🐾 点击: "
+    }
+    "HI" = @{
+        "TITLE" = "बिल्ली ऑटो क्लिकर"
+        "GRP_SPEED" = "🐾 क्लिक गति"
+        "GRP_HUMAN" = "🐾 मानव जैसा व्यवहार (एंटी-बैन)"
+        "GRP_CLICK" = "🐾 क्लिक विकल्प"
+        "BASE_INTERVAL" = "आधार अंतराल (ms):"
+        "VARIANCE" = "गति भिन्नता (%):"
+        "HUMAN_MODE" = "मानव जैसा मोड (अनुशंसित)"
+        "JITTER" = "कर्सर कंपन (पिक्सेल):"
+        "HOLD_MIN" = "होल्ड समय न्यूनतम (ms):"
+        "HOLD_MAX" = "होल्ड समय अधिकतम (ms):"
+        "BREAK_CHANCE" = "ब्रेक मौका (%):"
+        "TURBO_MODE" = "⚡ टर्बो मोड (1000+ CPS)"
+        "MOUSE_BUTTON" = "माउस बटन:"
+        "REPEAT" = "दोहराएं (0 = असीमित):"
+        "BTN_START" = "▶  शुरू करें  (F6)"
+        "BTN_STOP" = "⏸  रोकें  (F6)"
+        "STATUS_RUNNING" = "😸 स्थिति: चल रहा है"
+        "STATUS_STOPPED" = "💤 स्थिति: रुका हुआ"
+        "CLICK_COUNT" = "🐾 क्लिक: "
+    }
+    "ES" = @{
+        "TITLE" = "Gato Clicker Automático"
+        "GRP_SPEED" = "🐾 Velocidad de clic"
+        "GRP_HUMAN" = "🐾 Comportamiento humano (Anti-Ban)"
+        "GRP_CLICK" = "🐾 Opciones de clic"
+        "BASE_INTERVAL" = "Intervalo base (ms):"
+        "VARIANCE" = "Varianza de velocidad (%):"
+        "HUMAN_MODE" = "Modo humano (recomendado)"
+        "JITTER" = "Vibración del cursor (píxeles):"
+        "HOLD_MIN" = "Tiempo de espera mínimo (ms):"
+        "HOLD_MAX" = "Tiempo de espera máximo (ms):"
+        "BREAK_CHANCE" = "Probabilidad de pausa (%):"
+        "TURBO_MODE" = "⚡ MODO TURBO (1000+ CPS)"
+        "MOUSE_BUTTON" = "Botón del ratón:"
+        "REPEAT" = "Repetir (0 = ilimitado):"
+        "BTN_START" = "▶  INICIAR  (F6)"
+        "BTN_STOP" = "⏸  DETENER  (F6)"
+        "STATUS_RUNNING" = "😸 Estado: EN EJECUCIÓN"
+        "STATUS_STOPPED" = "💤 Estado: DETENIDO"
+        "CLICK_COUNT" = "🐾 Clics: "
+    }
+    "FR" = @{
+        "TITLE" = "Chaton Cliqueur Automatique"
+        "GRP_SPEED" = "🐾 Vitesse de clic"
+        "GRP_HUMAN" = "🐾 Comportement humain (Anti-Ban)"
+        "GRP_CLICK" = "🐾 Options de clic"
+        "BASE_INTERVAL" = "Intervalle de base (ms):"
+        "VARIANCE" = "Variance de vitesse (%):"
+        "HUMAN_MODE" = "Mode humain (recommandé)"
+        "JITTER" = "Tremblement du curseur (pixels):"
+        "HOLD_MIN" = "Temps de retenue min (ms):"
+        "HOLD_MAX" = "Temps de retenue max (ms):"
+        "BREAK_CHANCE" = "Probabilité de pause (%):"
+        "TURBO_MODE" = "⚡ MODE TURBO (1000+ CPS)"
+        "MOUSE_BUTTON" = "Bouton de la souris:"
+        "REPEAT" = "Répéter (0 = illimité):"
+        "BTN_START" = "▶  DÉMARRER  (F6)"
+        "BTN_STOP" = "⏸  ARRÊTER  (F6)"
+        "STATUS_RUNNING" = "😸 Statut: EN COURS"
+        "STATUS_STOPPED" = "💤 Statut: ARRÊTÉ"
+        "CLICK_COUNT" = "🐾 Clics: "
+    }
+    "AR" = @{
+        "TITLE" = "قاذف الماوس التلقائي"
+        "GRP_SPEED" = "🐾 سرعة النقر"
+        "GRP_HUMAN" = "🐾 سلوك شبيه بالإنسان (مكافحة الحظر)"
+        "GRP_CLICK" = "🐾 خيارات النقر"
+        "BASE_INTERVAL" = "الفاصل الزمني الأساسي (ms):"
+        "VARIANCE" = "تباين السرعة (%):"
+        "HUMAN_MODE" = "الوضع البشري (موصى به)"
+        "JITTER" = "اهتزاز المؤشر (بكسل):"
+        "HOLD_MIN" = "الحد الأدنى لوقت الضغط (ms):"
+        "HOLD_MAX" = "الحد الأقصى لوقت الضغط (ms):"
+        "BREAK_CHANCE" = "احتمالية الفترة الفاصلة (%):"
+        "TURBO_MODE" = "⚡ وضع توربو (1000+ CPS)"
+        "MOUSE_BUTTON" = "زر الماوس:"
+        "REPEAT" = "التكرار (0 = غير محدود):"
+        "BTN_START" = "▶  ابدأ  (F6)"
+        "BTN_STOP" = "⏸  توقف  (F6)"
+        "STATUS_RUNNING" = "😸 الحالة: قيد التشغيل"
+        "STATUS_STOPPED" = "💤 الحالة: متوقف"
+        "CLICK_COUNT" = "🐾 النقرات: "
+    }
+    "BN" = @{
+        "TITLE" = "বিড়াল স্বয়ংক্লিয় ক্লিকার"
+        "GRP_SPEED" = "🐾 ক্লিক গতি"
+        "GRP_HUMAN" = "🐾 মানব-সদৃশ আচরণ (এন্টি-বান)"
+        "GRP_CLICK" = "🐾 ক্লিক বিকল্প"
+        "BASE_INTERVAL" = "ভিত্তি বিরতি (ms):"
+        "VARIANCE" = "গতি বিচরণ (%):"
+        "HUMAN_MODE" = "মানব মোড (সুপারিশকৃত)"
+        "JITTER" = "কার্সর কম্পন (পিক্সেল):"
+        "HOLD_MIN" = "ধরে রাখার সময় ন্যূনতম (ms):"
+        "HOLD_MAX" = "ধরে রাখার সময় সর্বোচ্চ (ms):"
+        "BREAK_CHANCE" = "বিরতি সম্ভাবনা (%):"
+        "TURBO_MODE" = "⚡ টার্বো মোড (1000+ CPS)"
+        "MOUSE_BUTTON" = "মাউস বোতাম:"
+        "REPEAT" = "পুনরাবৃত্তি (0 = সীমাহীন):"
+        "BTN_START" = "▶  শুরু করুন  (F6)"
+        "BTN_STOP" = "⏸  বন্ধ করুন  (F6)"
+        "STATUS_RUNNING" = "😸 অবস্থা: চলমান"
+        "STATUS_STOPPED" = "💤 অবস্থা: বন্ধ"
+        "CLICK_COUNT" = "🐾 ক্লিক: "
+    }
+    "PT" = @{
+        "TITLE" = "Gato Clicker Automático"
+        "GRP_SPEED" = "🐾 Velocidade de clique"
+        "GRP_HUMAN" = "🐾 Comportamento humanóide (Anti-Ban)"
+        "GRP_CLICK" = "🐾 Opções de clique"
+        "BASE_INTERVAL" = "Intervalo base (ms):"
+        "VARIANCE" = "Variância de velocidade (%):"
+        "HUMAN_MODE" = "Modo humano (recomendado)"
+        "JITTER" = "Vibração do cursor (pixels):"
+        "HOLD_MIN" = "Tempo de espera mín (ms):"
+        "HOLD_MAX" = "Tempo de espera máx (ms):"
+        "BREAK_CHANCE" = "Probabilidade de pausa (%):"
+        "TURBO_MODE" = "⚡ MODO TURBO (1000+ CPS)"
+        "MOUSE_BUTTON" = "Botão do mouse:"
+        "REPEAT" = "Repetir (0 = ilimitado):"
+        "BTN_START" = "▶  INICIAR  (F6)"
+        "BTN_STOP" = "⏸  PARAR  (F6)"
+        "STATUS_RUNNING" = "😸 Status: EM EXECUÇÃO"
+        "STATUS_STOPPED" = "💤 Status: PARADO"
+        "CLICK_COUNT" = "🐾 Cliques: "
+    }
+    "RU" = @{
+        "TITLE" = "Автокликер с котиком"
+        "GRP_SPEED" = "🐾 Скорость клика"
+        "GRP_HUMAN" = "🐾 Человеческое поведение (Анти-бан)"
+        "GRP_CLICK" = "🐾 Опции клика"
+        "BASE_INTERVAL" = "Базовый интервал (мс):"
+        "VARIANCE" = "Изменение скорости (%):"
+        "HUMAN_MODE" = "Человеческий режим (рекомендуется)"
+        "JITTER" = "Дрожание курсора (пиксели):"
+        "HOLD_MIN" = "Мин время удержания (мс):"
+        "HOLD_MAX" = "Макс время удержания (мс):"
+        "BREAK_CHANCE" = "Вероятность паузы (%):"
+        "TURBO_MODE" = "⚡ ТУРБО РЕЖИМ (1000+ CPS)"
+        "MOUSE_BUTTON" = "Кнопка мыши:"
+        "REPEAT" = "Повтор (0 = бесконечно):"
+        "BTN_START" = "▶  СТАРТ  (F6)"
+        "BTN_STOP" = "⏸  СТОП  (F6)"
+        "STATUS_RUNNING" = "😸 Статус: РАБОТАЕТ"
+        "STATUS_STOPPED" = "💤 Статус: ОСТАНОВЛЕН"
+        "CLICK_COUNT" = "🐾 Клики: "
+    }
+    "UR" = @{
+        "TITLE" = "بلی کو خودکار کلک کنے والا"
+        "GRP_SPEED" = "🐾 کلک کی رفتار"
+        "GRP_HUMAN" = "🐾 انسانی رویہ (اینٹی بین)"
+        "GRP_CLICK" = "🐾 کلک کے آپشن"
+        "BASE_INTERVAL" = "بنیادی وقفہ (ms):"
+        "VARIANCE" = "رفتار کی تبدیلی (%):"
+        "HUMAN_MODE" = "انسانی موڈ (تجویز کردہ)"
+        "JITTER" = "کرسر لرزش (pixels):"
+        "HOLD_MIN" = "پکڑنے کا کم سے کم وقت (ms):"
+        "HOLD_MAX" = "پکڑنے کا زیادہ سے زیادہ وقت (ms):"
+        "BREAK_CHANCE" = "وقفے کا امکان (%):"
+        "TURBO_MODE" = "⚡ ٹربو موڈ (1000+ CPS)"
+        "MOUSE_BUTTON" = "ماؤس کا بٹن:"
+        "REPEAT" = "دہرائیں (0 = غیر محدود):"
+        "BTN_START" = "▶  شروع کریں  (F6)"
+        "BTN_STOP" = "⏸  روکیں  (F6)"
+        "STATUS_RUNNING" = "😸 حالت: چل رہا ہے"
+        "STATUS_STOPPED" = "💤 حالت: رکا ہوا"
+        "CLICK_COUNT" = "🐾 کلکس: "
     }
 }
 
@@ -102,5 +256,5 @@ function Set-Language {
 }
 
 function Get-AvailableLanguages {
-    return $script:strings.Keys
+    return @("EN", "TR", "ZH", "HI", "ES", "FR", "AR", "BN", "PT", "RU", "UR")
 }

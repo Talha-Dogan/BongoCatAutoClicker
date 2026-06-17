@@ -167,9 +167,18 @@ $langBox.Size     = New-Object System.Drawing.Size(60, 24)
 $langBox.DropDownStyle = "DropDownList"
 $langBox.BackColor = $cInput
 $langBox.ForeColor = $cText
-$langBox.Font     = New-Object System.Drawing.Font($fUI, 8)
+$langBox.Font     = New-Object System.Drawing.Font($fUI, 7)
 [void]$langBox.Items.Add("English")
 [void]$langBox.Items.Add("Türkçe")
+[void]$langBox.Items.Add("中文")
+[void]$langBox.Items.Add("हिन्दी")
+[void]$langBox.Items.Add("Español")
+[void]$langBox.Items.Add("Français")
+[void]$langBox.Items.Add("العربية")
+[void]$langBox.Items.Add("বাংলা")
+[void]$langBox.Items.Add("Português")
+[void]$langBox.Items.Add("Русский")
+[void]$langBox.Items.Add("اردو")
 $langBox.SelectedIndex = 0  # English default
 $form.Controls.Add($langBox)
 
@@ -367,14 +376,13 @@ $hotkeyTimer.Add_Tick({
 $hotkeyTimer.Start()
 
 # --- Olaylar ---
-# Dil seçim
+# Dil seçim (index -> dil kodu)
+$langCodes = @("EN", "TR", "ZH", "HI", "ES", "FR", "AR", "BN", "PT", "RU", "UR")
 $langBox.Add_SelectedIndexChanged({
-    if ($langBox.SelectedIndex -eq 0) {
-        Set-Language "EN"
-    } else {
-        Set-Language "TR"
+    if ($langBox.SelectedIndex -ge 0 -and $langBox.SelectedIndex -lt $langCodes.Count) {
+        Set-Language $langCodes[$langBox.SelectedIndex]
+        $form.Text = "😊 $(Get-String 'TITLE')"
     }
-    $form.Text = "😊 $(Get-String 'TITLE')"
 })
 
 $toggleBtn.Add_Click({ Set-Running (-not $engine.Running) })
