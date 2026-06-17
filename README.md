@@ -53,14 +53,20 @@ You may see a **"The publisher could not be verified"** warning when running the
 - ✅ Only uses built-in Windows APIs
 - ✅ Community-reviewed
 
-**How to proceed:**
-1. Click **"More info"** (if shown)
-2. Click **"Run anyway"**
-3. App launches normally
+**To remove the warning permanently:**
+1. Right-click `BongoCatAutoClicker.bat` → **Properties**
+2. Scroll to bottom → Check **"Unblock"** ✓
+3. Click **"Apply"** → **"OK"**
+4. Done! Run the file — no warning next time.
 
-**To verify manually:**
-- Right-click `.bat` → Edit → Check the PowerShell code
-- Check [our GitHub](https://github.com/Talha-Dogan/BongoCatAutoClicker) source
+**If warning appears again:**
+1. Click **"More info"** 
+2. Click **"Run anyway"**
+
+**Verify it's safe:**
+- Right-click `.bat` → Edit → Full source code visible
+- [GitHub source](https://github.com/Talha-Dogan/BongoCatAutoClicker) — open & transparent
+- Only built-in Windows APIs, zero telemetry
 
 ## ⚙️ Settings
 
@@ -158,14 +164,20 @@ Bu yazılım **eğitim ve kişisel kullanım** amacıyla sunulur (test, erişile
 - ✅ Sadece yerleşik Windows API'leri kullanır
 - ✅ Toplum tarafından gözden geçirilmiş
 
-**Nasıl devam etmeli:**
-1. **"Daha fazla bilgi"** tıkla (gösterilirse)
-2. **"Yine de çalıştır"** tıkla
-3. Uygulama normal şekilde açılır
+**Uyarıyı kalıcı olarak kaldırmak için:**
+1. `BongoCatAutoClicker.bat` → sağ tık → **Özellikler**
+2. Aşağı kaydır → **"Engellemeyi kaldır"** ✓
+3. **"Uygula"** → **"Tamam"**
+4. Bitir! Dosyayı çalıştır — bir daha uyarı gelmez.
 
-**Manuel olarak doğrula:**
-- `.bat` → sağ tık → Düzenle → PowerShell kodunu kontrol et
-- [GitHub](https://github.com/Talha-Dogan/BongoCatAutoClicker) kaynağını kontrol et
+**Eğer uyarı tekrar gelirse:**
+1. **"Daha fazla bilgi"** tıkla
+2. **"Yine de çalıştır"** tıkla
+
+**Güvenli olduğunu doğrula:**
+- `.bat` → sağ tık → Düzenle → Tüm kaynak kodu görünür
+- [GitHub kaynağı](https://github.com/Talha-Dogan/BongoCatAutoClicker) — açık ve şeffaf
+- Sadece yerleşik Windows API'leri, sıfır telemetri
 
 ## ⚙️ Ayarlar
 
