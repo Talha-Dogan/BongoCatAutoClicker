@@ -287,25 +287,20 @@ function Set-Running {
 
         if ([bool]$turboCheck.Checked) {
             $script:turboMode = $true
-            $cps = 1000
-            $limit = [int]$repeatBox.Value
-            $btn = if ($typeBox.SelectedItem -eq "Sag") { 'Right' } else { 'Left' }
-            Start-Turbo -Button $btn -Cps $cps -Limit $limit
+            $engine.Running = $true
+            Enable-TurboMode -ClickTimer $clickTimer
             $clickTimer.Start()
         } else {
             $script:turboMode = $false
             $engine.Running = $true
-            $clickTimer.Interval = 1
+            Disable-TurboMode -ClickTimer $clickTimer
             $clickTimer.Start()
         }
     } else {
-        if ($script:turboMode) {
-            Stop-Turbo
-        } else {
-            $engine.Running = $false
-            $clickTimer.Stop()
-        }
+        $engine.Running = $false
         $script:turboMode = $false
+        $clickTimer.Stop()
+        Disable-TurboMode -ClickTimer $clickTimer
         $catLabel.Text         = "🐱  💤"
         $statusLabel.Text      = "💤 Durum: DURDU"
         $statusLabel.ForeColor = $cStopTxt
@@ -316,21 +311,11 @@ function Set-Running {
     }
 }
 
-# Tiklama zamanlayicisi (normal mod) / sayac timer'i (turbo mod)
+# Tiklama zamanlayicisi (normal + turbo mod)
 $clickTimer          = New-Object System.Windows.Forms.Timer
 $clickTimer.Interval = 50
 $clickTimer.Add_Tick({
-    if ($script:turboMode) {
-        if (Test-TurboRunning) {
-            $cnt = Get-TurboCount
-            $countLabel.Text = "🐾 Tiklama: $cnt"
-            if ($pawLabel.Text -eq "🐾 . . . . . 🐾") { $pawLabel.Text = "🐾 ✦ ✦ ✦ 🐾" }
-            else { $pawLabel.Text = "🐾 . . . . . 🐾" }
-        } else {
-            Set-Running $false
-            [System.Media.SystemSounds]::Asterisk.Play()
-        }
-    } elseif ($engine.Running) {
+    if ($engine.Running) {
         Sync-SettingsFromUI
         Invoke-EngineClick -Engine $engine
         $countLabel.Text = "🐾 Tiklama: $($engine.ClickCount)"
@@ -341,7 +326,9 @@ $clickTimer.Add_Tick({
             [System.Media.SystemSounds]::Asterisk.Play()
             return
         }
-        $clickTimer.Interval = Get-EngineNextDelay -Engine $engine
+        if (-not $script:turboMode) {
+            $clickTimer.Interval = Get-EngineNextDelay -Engine $engine
+        }
     }
 })
 
@@ -377,7 +364,6 @@ $turboCheck.Add_CheckedChanged({
 $form.Add_FormClosing({
     $clickTimer.Stop()
     $hotkeyTimer.Stop()
-    Stop-Turbo
 })
 
 $toggleBtn.Tag = "go"
