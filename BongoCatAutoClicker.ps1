@@ -76,35 +76,49 @@ function New-RoundedPath {
 function New-Card {
     param($Parent, [int]$X, [int]$Y, [int]$W, [int]$H, [string]$TitleKey)
 
-    # Golge
+    # Golge paneli (Region yok - Paint ile cizilir)
     $sh = New-Object System.Windows.Forms.Panel
     $sh.Location  = New-Object System.Drawing.Point($X, ($Y + 5))
     $sh.Size      = New-Object System.Drawing.Size($W, $H)
-    $sh.BackColor = $cShadow
-    $sh.Region    = New-Object System.Drawing.Region((New-RoundedPath $W $H 14))
+    $sh.BackColor = $cBg
+    $sh.Add_Paint({
+        param($s, $e)
+        $g = $e.Graphics
+        $g.SmoothingMode = 'AntiAlias'
+        $p2 = New-RoundedPath $s.Width $s.Height 14
+        $b2 = New-Object System.Drawing.SolidBrush($cShadow)
+        $g.FillPath($b2, $p2)
+        $b2.Dispose(); $p2.Dispose()
+    }.GetNewClosure())
     $Parent.Controls.Add($sh)
 
-    # Kart
+    # Kart paneli (Region yok - arka plan Paint ile acikca doldurulur)
     $panel          = New-Object System.Windows.Forms.Panel
     $panel.Location = New-Object System.Drawing.Point($X, $Y)
     $panel.Size     = New-Object System.Drawing.Size($W, $H)
-    $panel.BackColor = $cCard
-    $panel.Region   = New-Object System.Drawing.Region((New-RoundedPath $W $H 14))
+    $panel.BackColor = $cBg   # kose artiklari form rengiyle karisir
     $panel.Add_Paint({
         param($s, $e)
-        $e.Graphics.SmoothingMode = 'AntiAlias'
+        $g = $e.Graphics
+        $g.SmoothingMode = 'AntiAlias'
+        $path = New-RoundedPath $s.Width $s.Height 14
+        # 1. Beyaz zemin
+        $bFill = New-Object System.Drawing.SolidBrush($cCard)
+        $g.FillPath($bFill, $path)
+        $bFill.Dispose()
+        # 2. Sol accent serit (clip ile yuvarlatilmis)
+        $clip = New-Object System.Drawing.Region($path)
+        $g.SetClip($clip)
+        $bAcc = New-Object System.Drawing.SolidBrush($cAccent)
+        $g.FillRectangle($bAcc, 0, 0, 4, $s.Height)
+        $bAcc.Dispose(); $clip.Dispose()
+        $g.ResetClip()
+        # 3. Kenar cercevesi
         $pen = New-Object System.Drawing.Pen($cBorder, 1)
-        $e.Graphics.DrawPath($pen, (New-RoundedPath $s.Width $s.Height 14))
-        $pen.Dispose()
+        $g.DrawPath($pen, $path)
+        $pen.Dispose(); $path.Dispose()
     }.GetNewClosure())
     $Parent.Controls.Add($panel)
-
-    # Baslik cubugu (accent)
-    $bar = New-Object System.Windows.Forms.Panel
-    $bar.Location  = New-Object System.Drawing.Point(0, 0)
-    $bar.Size      = New-Object System.Drawing.Size(4, $H)
-    $bar.BackColor = $cAccent
-    $panel.Controls.Add($bar)
 
     # Baslik etiketi
     $hdr          = New-Object System.Windows.Forms.Label
