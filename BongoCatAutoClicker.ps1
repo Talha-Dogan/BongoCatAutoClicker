@@ -73,44 +73,47 @@ function New-RoundedPath {
 }
 
 # --- Kart paneli ---
-# NOT: Paint event icinde dis fonksiyon cagirmak PowerShell closure'larda
-# sessizce hata verir. Bu yuzden DrawRectangle/FillRectangle kullaniyoruz.
+# Paint event KULLANILMIYOR: PS5.1'de Panel.Add_Paint BackColor render'ini bozuyor.
+# Accent bar -> child Panel (BackColor), border -> BorderStyle yok + hdr separator.
 function New-Card {
     param($Parent, [int]$X, [int]$Y, [int]$W, [int]$H, [string]$TitleKey)
 
-    # Golge: karti 4px asagida ayni renk kucuk panel
+    # Golge (arkada, sade pembe panel)
     $sh           = New-Object System.Windows.Forms.Panel
-    $sh.Location  = New-Object System.Drawing.Point(($X + 2), ($Y + 4))
+    $sh.Location  = New-Object System.Drawing.Point(($X + 3), ($Y + 4))
     $sh.Size      = New-Object System.Drawing.Size($W, $H)
     $sh.BackColor = $cShadow
     $Parent.Controls.Add($sh)
 
-    # Kart: beyaz zemin, sol accent cubugu Paint ile, kenar Paint ile
+    # Kart govdesi: beyaz, Paint event YOK
     $panel           = New-Object System.Windows.Forms.Panel
     $panel.Location  = New-Object System.Drawing.Point($X, $Y)
     $panel.Size      = New-Object System.Drawing.Size($W, $H)
-    $panel.BackColor = $cCard   # beyaz - kesinlikle gorulur
-    $panel.Add_Paint({
-        param($s, $e)
-        $g = $e.Graphics
-        # Sol pembe accent serit (4 px)
-        $g.FillRectangle(
-            (New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(255,105,160))),
-            0, 0, 4, $s.Height)
-        # Ince kenar cizgisi
-        $g.DrawRectangle(
-            (New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(245,210,228), 1)),
-            0, 0, ($s.Width - 1), ($s.Height - 1))
-    })
+    $panel.BackColor = $cCard
+    $panel.BorderStyle = 'None'
     $Parent.Controls.Add($panel)
+
+    # Sol accent cubugu (child Panel - Paint event gerekmez)
+    $bar           = New-Object System.Windows.Forms.Panel
+    $bar.Location  = New-Object System.Drawing.Point(0, 0)
+    $bar.Size      = New-Object System.Drawing.Size(5, $H)
+    $bar.BackColor = $cAccent
+    $panel.Controls.Add($bar)
+
+    # Baslik separator (ince pembe cizgi, alt kenara)
+    $sep           = New-Object System.Windows.Forms.Panel
+    $sep.Location  = New-Object System.Drawing.Point(0, 35)
+    $sep.Size      = New-Object System.Drawing.Size($W, 1)
+    $sep.BackColor = $cBorder
+    $panel.Controls.Add($sep)
 
     # Baslik etiketi
     $hdr           = New-Object System.Windows.Forms.Label
     $hdr.Font      = New-Object System.Drawing.Font($fUI, 9, [System.Drawing.FontStyle]::Bold)
     $hdr.ForeColor = $cHeader
     $hdr.BackColor = $cCard
-    $hdr.Location  = New-Object System.Drawing.Point(18, 11)
-    $hdr.Size      = New-Object System.Drawing.Size(($W - 30), 20)
+    $hdr.Location  = New-Object System.Drawing.Point(18, 9)
+    $hdr.Size      = New-Object System.Drawing.Size(($W - 30), 22)
     $panel.Controls.Add($hdr)
     Register-Translatable $hdr $TitleKey
 
@@ -205,27 +208,29 @@ Add-DragHandler $banner
 $btnClose          = New-Object System.Windows.Forms.Label
 $btnClose.Text     = "✕"
 $btnClose.Font     = New-Object System.Drawing.Font($fUI, 11, [System.Drawing.FontStyle]::Bold)
-$btnClose.ForeColor = $cWinBtn
+$btnClose.ForeColor = [System.Drawing.Color]::White
+$btnClose.BackColor = [System.Drawing.Color]::Transparent
 $btnClose.Location = New-Object System.Drawing.Point(388, 8)
 $btnClose.Size     = New-Object System.Drawing.Size(24, 24)
 $btnClose.TextAlign = "MiddleCenter"
 $btnClose.Cursor   = [System.Windows.Forms.Cursors]::Hand
 $btnClose.Add_Click({ $form.Close() })
-$btnClose.Add_MouseEnter({ $btnClose.ForeColor = [System.Drawing.Color]::White })
-$btnClose.Add_MouseLeave({ $btnClose.ForeColor = $cWinBtn })
+$btnClose.Add_MouseEnter({ $btnClose.ForeColor = [System.Drawing.Color]::FromArgb(255,200,200) })
+$btnClose.Add_MouseLeave({ $btnClose.ForeColor = [System.Drawing.Color]::White })
 $banner.Controls.Add($btnClose)
 
 $btnMin          = New-Object System.Windows.Forms.Label
 $btnMin.Text     = "─"
 $btnMin.Font     = New-Object System.Drawing.Font($fUI, 10, [System.Drawing.FontStyle]::Bold)
-$btnMin.ForeColor = $cWinBtn
+$btnMin.ForeColor = [System.Drawing.Color]::White
+$btnMin.BackColor = [System.Drawing.Color]::Transparent
 $btnMin.Location = New-Object System.Drawing.Point(360, 8)
 $btnMin.Size     = New-Object System.Drawing.Size(24, 24)
 $btnMin.TextAlign = "MiddleCenter"
 $btnMin.Cursor   = [System.Windows.Forms.Cursors]::Hand
 $btnMin.Add_Click({ $form.WindowState = 'Minimized' })
-$btnMin.Add_MouseEnter({ $btnMin.ForeColor = [System.Drawing.Color]::White })
-$btnMin.Add_MouseLeave({ $btnMin.ForeColor = $cWinBtn })
+$btnMin.Add_MouseEnter({ $btnMin.ForeColor = [System.Drawing.Color]::FromArgb(255,230,150) })
+$btnMin.Add_MouseLeave({ $btnMin.ForeColor = [System.Drawing.Color]::White })
 $banner.Controls.Add($btnMin)
 
 # Kedi emoji
