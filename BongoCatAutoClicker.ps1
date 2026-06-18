@@ -73,60 +73,44 @@ function New-RoundedPath {
 }
 
 # --- Kart paneli ---
+# NOT: Paint event icinde dis fonksiyon cagirmak PowerShell closure'larda
+# sessizce hata verir. Bu yuzden DrawRectangle/FillRectangle kullaniyoruz.
 function New-Card {
     param($Parent, [int]$X, [int]$Y, [int]$W, [int]$H, [string]$TitleKey)
 
-    # Golge paneli (Region yok - Paint ile cizilir)
-    $sh = New-Object System.Windows.Forms.Panel
-    $sh.Location  = New-Object System.Drawing.Point($X, ($Y + 5))
+    # Golge: karti 4px asagida ayni renk kucuk panel
+    $sh           = New-Object System.Windows.Forms.Panel
+    $sh.Location  = New-Object System.Drawing.Point(($X + 2), ($Y + 4))
     $sh.Size      = New-Object System.Drawing.Size($W, $H)
-    $sh.BackColor = $cBg
-    $sh.Add_Paint({
-        param($s, $e)
-        $g = $e.Graphics
-        $g.SmoothingMode = 'AntiAlias'
-        $p2 = New-RoundedPath $s.Width $s.Height 14
-        $b2 = New-Object System.Drawing.SolidBrush($cShadow)
-        $g.FillPath($b2, $p2)
-        $b2.Dispose(); $p2.Dispose()
-    }.GetNewClosure())
+    $sh.BackColor = $cShadow
     $Parent.Controls.Add($sh)
 
-    # Kart paneli (Region yok - arka plan Paint ile acikca doldurulur)
-    $panel          = New-Object System.Windows.Forms.Panel
-    $panel.Location = New-Object System.Drawing.Point($X, $Y)
-    $panel.Size     = New-Object System.Drawing.Size($W, $H)
-    $panel.BackColor = $cBg   # kose artiklari form rengiyle karisir
+    # Kart: beyaz zemin, sol accent cubugu Paint ile, kenar Paint ile
+    $panel           = New-Object System.Windows.Forms.Panel
+    $panel.Location  = New-Object System.Drawing.Point($X, $Y)
+    $panel.Size      = New-Object System.Drawing.Size($W, $H)
+    $panel.BackColor = $cCard   # beyaz - kesinlikle gorulur
     $panel.Add_Paint({
         param($s, $e)
         $g = $e.Graphics
-        $g.SmoothingMode = 'AntiAlias'
-        $path = New-RoundedPath $s.Width $s.Height 14
-        # 1. Beyaz zemin
-        $bFill = New-Object System.Drawing.SolidBrush($cCard)
-        $g.FillPath($bFill, $path)
-        $bFill.Dispose()
-        # 2. Sol accent serit (clip ile yuvarlatilmis)
-        $clip = New-Object System.Drawing.Region($path)
-        $g.SetClip($clip)
-        $bAcc = New-Object System.Drawing.SolidBrush($cAccent)
-        $g.FillRectangle($bAcc, 0, 0, 4, $s.Height)
-        $bAcc.Dispose(); $clip.Dispose()
-        $g.ResetClip()
-        # 3. Kenar cercevesi
-        $pen = New-Object System.Drawing.Pen($cBorder, 1)
-        $g.DrawPath($pen, $path)
-        $pen.Dispose(); $path.Dispose()
-    }.GetNewClosure())
+        # Sol pembe accent serit (4 px)
+        $g.FillRectangle(
+            (New-Object System.Drawing.SolidBrush([System.Drawing.Color]::FromArgb(255,105,160))),
+            0, 0, 4, $s.Height)
+        # Ince kenar cizgisi
+        $g.DrawRectangle(
+            (New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(245,210,228), 1)),
+            0, 0, ($s.Width - 1), ($s.Height - 1))
+    })
     $Parent.Controls.Add($panel)
 
     # Baslik etiketi
-    $hdr          = New-Object System.Windows.Forms.Label
-    $hdr.Font     = New-Object System.Drawing.Font($fUI, 9, [System.Drawing.FontStyle]::Bold)
+    $hdr           = New-Object System.Windows.Forms.Label
+    $hdr.Font      = New-Object System.Drawing.Font($fUI, 9, [System.Drawing.FontStyle]::Bold)
     $hdr.ForeColor = $cHeader
     $hdr.BackColor = $cCard
-    $hdr.Location = New-Object System.Drawing.Point(18, 11)
-    $hdr.Size     = New-Object System.Drawing.Size(($W - 30), 20)
+    $hdr.Location  = New-Object System.Drawing.Point(18, 11)
+    $hdr.Size      = New-Object System.Drawing.Size(($W - 30), 20)
     $panel.Controls.Add($hdr)
     Register-Translatable $hdr $TitleKey
 
