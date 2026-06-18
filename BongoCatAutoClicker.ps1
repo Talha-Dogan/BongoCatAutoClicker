@@ -92,6 +92,10 @@ function New-Card {
     $panel.BackColor = $cCard
     $panel.BorderStyle = 'None'
     $Parent.Controls.Add($panel)
+    # KRITIK: golge panel z-order'da onde kalip karti kapatiyordu.
+    # Karti one al ki icerigi (basliklar, checkbox, numeric) gorunsun.
+    $panel.BringToFront()
+    $sh.SendToBack()
 
     # Sol accent cubugu (child Panel - Paint event gerekmez)
     $bar           = New-Object System.Windows.Forms.Panel
