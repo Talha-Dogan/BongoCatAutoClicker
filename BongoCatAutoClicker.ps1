@@ -27,6 +27,19 @@ $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $engine = New-ClickEngine
 $script:turboMode = $false
 
+# --- Animasyonlu bongo kedi GIF'leri (PictureBox otomatik oynatir) ---
+function Get-GifSafe {
+    param([string]$Name)
+    $p = Join-Path $root $Name
+    if (Test-Path $p) {
+        try { return [System.Drawing.Image]::FromFile($p) } catch { return $null }
+    }
+    return $null
+}
+$idleGif   = Get-GifSafe 'bongo-cat-idle.gif'   # bos durumda surekli oynar
+$startGif  = Get-GifSafe 'Start.gif'            # baslayinca BIR KEZ oynar
+$start1Gif = Get-GifSafe 'Start1.gif'           # calistigi surece surekli oynar
+
 # --- Ceviri kayit sistemi ---
 $script:translatables = New-Object System.Collections.ArrayList
 function Register-Translatable {
@@ -185,93 +198,63 @@ function Add-DragHandler {
     $Control.Add_MouseUp({ $script:dragging = $false })
 }
 
-# ---- HERO BANNER ----
+# ---- HERO BANNER (animasyonlu bongo kedi GIF) ----
 $banner          = New-Object System.Windows.Forms.Panel
 $banner.Location = New-Object System.Drawing.Point(0, 0)
 $banner.Size     = New-Object System.Drawing.Size(420, 160)
+$banner.BackColor = [System.Drawing.Color]::White
 $banner.Add_Paint({
     param($s, $e)
-    $g = $e.Graphics
-    $g.SmoothingMode = 'AntiAlias'
-    # Gradyan arka plan
-    $rect  = New-Object System.Drawing.Rectangle(0, 0, $s.Width, $s.Height)
-    $brush = New-Object System.Drawing.Drawing2D.LinearGradientBrush(
-                $rect, $cBanner1, $cBanner2,
-                [System.Drawing.Drawing2D.LinearGradientMode]::Vertical)
-    $g.FillRectangle($brush, $rect)
-    $brush.Dispose()
-    # Alt kenarda hafif beyaz separator
-    $sepPen = New-Object System.Drawing.Pen([System.Drawing.Color]::FromArgb(40, 255, 255, 255), 1)
-    $g.DrawLine($sepPen, 0, $s.Height - 1, $s.Width, $s.Height - 1)
-    $sepPen.Dispose()
+    # Alt kenarda ince pembe ayirici cizgi
+    $pen = New-Object System.Drawing.Pen($cAccent, 2)
+    $e.Graphics.DrawLine($pen, 0, $s.Height - 1, $s.Width, $s.Height - 1)
+    $pen.Dispose()
 }.GetNewClosure())
 $form.Controls.Add($banner)
 Add-DragHandler $banner
 
-# Pencere butonlari (saga yasli)
+# Animasyonlu kedi (PictureBox GIF'i otomatik oynatir)
+$catPic           = New-Object System.Windows.Forms.PictureBox
+$catPic.Location  = New-Object System.Drawing.Point(0, 4)
+$catPic.Size      = New-Object System.Drawing.Size(420, 150)
+$catPic.SizeMode  = 'Zoom'
+$catPic.BackColor = [System.Drawing.Color]::White
+if ($idleGif) { $catPic.Image = $idleGif }
+$banner.Controls.Add($catPic)
+Add-DragHandler $catPic
+
+# Pencere butonlari (saga yasli, pembe - beyaz uzerinde gorunur)
 $btnClose          = New-Object System.Windows.Forms.Label
 $btnClose.Text     = "✕"
 $btnClose.Font     = New-Object System.Drawing.Font($fUI, 11, [System.Drawing.FontStyle]::Bold)
-$btnClose.ForeColor = [System.Drawing.Color]::White
-$btnClose.BackColor = [System.Drawing.Color]::Transparent
-$btnClose.Location = New-Object System.Drawing.Point(388, 8)
-$btnClose.Size     = New-Object System.Drawing.Size(24, 24)
+$btnClose.ForeColor = $cHeader
+$btnClose.BackColor = [System.Drawing.Color]::White
+$btnClose.Location = New-Object System.Drawing.Point(388, 6)
+$btnClose.Size     = New-Object System.Drawing.Size(24, 22)
 $btnClose.TextAlign = "MiddleCenter"
 $btnClose.Cursor   = [System.Windows.Forms.Cursors]::Hand
 $btnClose.Add_Click({ $form.Close() })
-$btnClose.Add_MouseEnter({ $btnClose.ForeColor = [System.Drawing.Color]::FromArgb(255,200,200) })
-$btnClose.Add_MouseLeave({ $btnClose.ForeColor = [System.Drawing.Color]::White })
+$btnClose.Add_MouseEnter({ $btnClose.ForeColor = [System.Drawing.Color]::FromArgb(220,40,70) })
+$btnClose.Add_MouseLeave({ $btnClose.ForeColor = $cHeader })
 $banner.Controls.Add($btnClose)
 
 $btnMin          = New-Object System.Windows.Forms.Label
 $btnMin.Text     = "─"
 $btnMin.Font     = New-Object System.Drawing.Font($fUI, 10, [System.Drawing.FontStyle]::Bold)
-$btnMin.ForeColor = [System.Drawing.Color]::White
-$btnMin.BackColor = [System.Drawing.Color]::Transparent
-$btnMin.Location = New-Object System.Drawing.Point(360, 8)
-$btnMin.Size     = New-Object System.Drawing.Size(24, 24)
+$btnMin.ForeColor = $cHeader
+$btnMin.BackColor = [System.Drawing.Color]::White
+$btnMin.Location = New-Object System.Drawing.Point(360, 6)
+$btnMin.Size     = New-Object System.Drawing.Size(24, 22)
 $btnMin.TextAlign = "MiddleCenter"
 $btnMin.Cursor   = [System.Windows.Forms.Cursors]::Hand
 $btnMin.Add_Click({ $form.WindowState = 'Minimized' })
-$btnMin.Add_MouseEnter({ $btnMin.ForeColor = [System.Drawing.Color]::FromArgb(255,230,150) })
-$btnMin.Add_MouseLeave({ $btnMin.ForeColor = [System.Drawing.Color]::White })
+$btnMin.Add_MouseEnter({ $btnMin.ForeColor = [System.Drawing.Color]::FromArgb(150,60,95) })
+$btnMin.Add_MouseLeave({ $btnMin.ForeColor = $cHeader })
 $banner.Controls.Add($btnMin)
 
-# Kedi emoji
-$catLabel          = New-Object System.Windows.Forms.Label
-$catLabel.Text     = "🐱"
-$catLabel.Font     = New-Object System.Drawing.Font($fEmoji, 36)
-$catLabel.Location = New-Object System.Drawing.Point(0, 18)
-$catLabel.Size     = New-Object System.Drawing.Size(420, 60)
-$catLabel.TextAlign = "MiddleCenter"
-$catLabel.BackColor = [System.Drawing.Color]::Transparent
-$catLabel.ForeColor = [System.Drawing.Color]::White
-$banner.Controls.Add($catLabel)
-Add-DragHandler $catLabel
-
-# Uygulama adi
-$titleLabel          = New-Object System.Windows.Forms.Label
-$titleLabel.Font     = New-Object System.Drawing.Font($fUI, 14, [System.Drawing.FontStyle]::Bold)
-$titleLabel.ForeColor = [System.Drawing.Color]::White
-$titleLabel.Location = New-Object System.Drawing.Point(0, 82)
-$titleLabel.Size     = New-Object System.Drawing.Size(420, 34)
-$titleLabel.TextAlign = "MiddleCenter"
-$titleLabel.BackColor = [System.Drawing.Color]::Transparent
-$banner.Controls.Add($titleLabel)
-Register-Translatable $titleLabel "TITLE"
-Add-DragHandler $titleLabel
-
-# Pati dekorasyon
-$pawLabel          = New-Object System.Windows.Forms.Label
-$pawLabel.Text     = "🐾 ∙ ∙ ∙ ∙ ∙ 🐾"
-$pawLabel.Font     = New-Object System.Drawing.Font($fEmoji, 10)
-$pawLabel.Location = New-Object System.Drawing.Point(0, 120)
-$pawLabel.Size     = New-Object System.Drawing.Size(420, 28)
-$pawLabel.TextAlign = "MiddleCenter"
-$pawLabel.ForeColor = [System.Drawing.Color]::FromArgb(200, 255, 230, 245)
-$pawLabel.BackColor = [System.Drawing.Color]::Transparent
-$banner.Controls.Add($pawLabel)
-Add-DragHandler $pawLabel
+# Butonlar GIF'in onunde kalsin (tiklanabilir olsun)
+$btnClose.BringToFront()
+$btnMin.BringToFront()
 
 # ---- Dil secici (banner altinda, ince) ----
 $langRow          = New-Object System.Windows.Forms.Panel
@@ -457,7 +440,14 @@ function Set-Running {
     param([bool]$state)
     if ($state) {
         Sync-SettingsFromUI
-        $catLabel.Text         = "😸"
+        # GIF: once Start.gif BIR KEZ, sonra (4.2 sn) Start1.gif surekli
+        $startGifTimer.Stop()
+        if ($startGif) {
+            $catPic.Image = $startGif
+            $startGifTimer.Start()
+        } elseif ($start1Gif) {
+            $catPic.Image = $start1Gif
+        }
         $statusLabel.Text      = Get-String 'STATUS_RUNNING'
         $statusLabel.ForeColor = $cGoTxt
         $toggleBtn.Text        = Get-String 'BTN_STOP'
@@ -480,15 +470,26 @@ function Set-Running {
         $script:turboMode = $false
         $clickTimer.Stop()
         Disable-TurboMode -ClickTimer $clickTimer
-        $catLabel.Text         = "🐱"
+        # GIF: idle (bos durum) animasyonuna don
+        $startGifTimer.Stop()
+        if ($idleGif) { $catPic.Image = $idleGif }
         $statusLabel.Text      = Get-String 'STATUS_STOPPED'
         $statusLabel.ForeColor = $cStopTxt
         $toggleBtn.Text        = Get-String 'BTN_START'
         $toggleBtn.BackColor   = $cGo
         $toggleBtn.Tag         = "go"
-        $pawLabel.Text         = "🐾 ∙ ∙ ∙ ∙ ∙ 🐾"
     }
 }
+
+# Start.gif bir kez oynayip Start1.gif'e gecsin diye tek seferlik timer
+$startGifTimer          = New-Object System.Windows.Forms.Timer
+$startGifTimer.Interval = 4200   # Start.gif tam suresi (84 kare ~ 4.2 sn)
+$startGifTimer.Add_Tick({
+    $startGifTimer.Stop()
+    if (($engine.Running -or $script:turboMode) -and $start1Gif) {
+        $catPic.Image = $start1Gif
+    }
+})
 
 # Timer
 $clickTimer          = New-Object System.Windows.Forms.Timer
@@ -499,8 +500,6 @@ $clickTimer.Add_Tick({
     if ($script:turboMode) {
         $reached = Invoke-TurboBurst -Engine $engine
         $countLabel.Text = "$(Get-String 'CLICK_COUNT')$($engine.ClickCount)"
-        if ($pawLabel.Text -eq "🐾 ∙ ∙ ∙ ∙ ∙ 🐾") { $pawLabel.Text = "🐾 ✦ ✦ ✦ ✦ ✦ 🐾" }
-        else { $pawLabel.Text = "🐾 ∙ ∙ ∙ ∙ ∙ 🐾" }
         if ($reached) {
             Set-Running $false
             [System.Media.SystemSounds]::Asterisk.Play()
@@ -509,8 +508,6 @@ $clickTimer.Add_Tick({
         Sync-SettingsFromUI
         Invoke-EngineClick -Engine $engine
         $countLabel.Text = "$(Get-String 'CLICK_COUNT')$($engine.ClickCount)"
-        if ($pawLabel.Text -eq "🐾 ∙ ∙ ∙ ∙ ∙ 🐾") { $pawLabel.Text = "🐾 ✦ ✦ ✦ ✦ ✦ 🐾" }
-        else { $pawLabel.Text = "🐾 ∙ ∙ ∙ ∙ ∙ 🐾" }
         if (Test-EngineLimitReached -Engine $engine) {
             Set-Running $false
             [System.Media.SystemSounds]::Asterisk.Play()
@@ -560,6 +557,7 @@ $turboCheck.Add_CheckedChanged({
 $form.Add_FormClosing({
     $clickTimer.Stop()
     $hotkeyTimer.Stop()
+    $startGifTimer.Stop()
 })
 
 $toggleBtn.Tag = "go"
