@@ -15,6 +15,53 @@ Add-Type -AssemblyName System.Windows.Forms
 Add-Type -AssemblyName System.Drawing
 [System.Windows.Forms.Application]::EnableVisualStyles()
 
+# --- Kenarliksiz ama kenarlardan boyutlandirilabilir pencere (en-boy orani kilitli) ---
+if (-not ('BongoForm' -as [type])) {
+Add-Type -ReferencedAssemblies System.Windows.Forms, System.Drawing -TypeDefinition @"
+using System;
+using System.Drawing;
+using System.Windows.Forms;
+using System.Runtime.InteropServices;
+public class BongoForm : Form {
+    const int WM_NCHITTEST = 0x0084;
+    const int WM_SIZING    = 0x0214;
+    const int HTCLIENT=1,HTLEFT=10,HTRIGHT=11,HTTOP=12,HTTOPLEFT=13,HTTOPRIGHT=14,HTBOTTOM=15,HTBOTTOMLEFT=16,HTBOTTOMRIGHT=17;
+    const int GRIP = 7;
+    public double AspectRatio = 420.0/820.0;  // genislik / yukseklik
+    public int MinW = 300;
+    [StructLayout(LayoutKind.Sequential)] public struct RECT { public int Left,Top,Right,Bottom; }
+    protected override void WndProc(ref Message m) {
+        if (m.Msg == WM_NCHITTEST) {
+            Point p = PointToClient(Cursor.Position);
+            int w = ClientSize.Width, h = ClientSize.Height;
+            bool l = p.X <= GRIP, r = p.X >= w-GRIP, t = p.Y <= GRIP, b = p.Y >= h-GRIP;
+            if (b && r) { m.Result=(IntPtr)HTBOTTOMRIGHT; return; }
+            if (b && l) { m.Result=(IntPtr)HTBOTTOMLEFT;  return; }
+            if (t && r) { m.Result=(IntPtr)HTTOPRIGHT;    return; }
+            if (t && l) { m.Result=(IntPtr)HTTOPLEFT;     return; }
+            if (l) { m.Result=(IntPtr)HTLEFT;   return; }
+            if (r) { m.Result=(IntPtr)HTRIGHT;  return; }
+            if (t) { m.Result=(IntPtr)HTTOP;    return; }
+            if (b) { m.Result=(IntPtr)HTBOTTOM; return; }
+            m.Result=(IntPtr)HTCLIENT; return;
+        }
+        if (m.Msg == WM_SIZING) {
+            RECT rc = (RECT)Marshal.PtrToStructure(m.LParam, typeof(RECT));
+            int w = rc.Right - rc.Left;
+            if (w < MinW) w = MinW;
+            int h = (int)Math.Round(w / AspectRatio);
+            int edge = m.WParam.ToInt32();
+            if (edge==1||edge==4||edge==7) rc.Left = rc.Right - w; else rc.Right = rc.Left + w;
+            if (edge==3||edge==4||edge==5) rc.Top  = rc.Bottom - h; else rc.Bottom = rc.Top + h;
+            Marshal.StructureToPtr(rc, m.LParam, false);
+            m.Result=(IntPtr)1; return;
+        }
+        base.WndProc(ref m);
+    }
+}
+"@
+}
+
 # --- Bagimliliklari yukle (dot-source) ---
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 . (Join-Path $root 'src\Interop.ps1')
@@ -83,6 +130,56 @@ function New-RoundedPath {
     $p.AddArc(0,       $H-$d-1, $d, $d,  90, 90)
     $p.CloseFigure()
     return $p
+}
+
+# --- Oranli olcekleme altyapisi (pencere boyutlandirilinca tum icerik buyur/kuculur) ---
+$script:designW       = 420
+$script:designH       = 820
+$script:origBounds    = New-Object 'System.Collections.Generic.Dictionary[object,System.Drawing.Rectangle]'
+$script:origFont      = New-Object 'System.Collections.Generic.Dictionary[object,System.Drawing.Font]'
+$script:appliedFont   = New-Object 'System.Collections.Generic.Dictionary[object,System.Drawing.Font]'
+$script:originalsReady = $false
+
+function Record-Originals {
+    param($parent)
+    foreach ($c in $parent.Controls) {
+        $script:origBounds[$c] = $c.Bounds
+        $script:origFont[$c]   = $c.Font
+        Record-Originals $c
+    }
+}
+function Apply-LayoutScale {
+    param($parent, [double]$s)
+    foreach ($c in $parent.Controls) {
+        if ($script:origBounds.ContainsKey($c)) {
+            $b = $script:origBounds[$c]
+            $c.Bounds = New-Object System.Drawing.Rectangle(
+                [int]($b.X * $s), [int]($b.Y * $s), [int]($b.Width * $s), [int]($b.Height * $s))
+        }
+        Apply-LayoutScale $c $s
+    }
+}
+function Apply-FontScale {
+    param($parent, [double]$s)
+    foreach ($c in $parent.Controls) {
+        if ($script:origFont.ContainsKey($c)) {
+            $of = $script:origFont[$c]
+            $ns = [Math]::Max(5.0, [double]$of.Size * $s)
+            $nf = New-Object System.Drawing.Font($of.FontFamily, $ns, $of.Style)
+            $c.Font = $nf
+            if ($script:appliedFont.ContainsKey($c)) { $script:appliedFont[$c].Dispose() }
+            $script:appliedFont[$c] = $nf
+        }
+        Apply-FontScale $c $s
+    }
+}
+function Apply-UIScale {
+    param([double]$s)
+    Apply-LayoutScale $form $s
+    # Yuvarlatilmis bolgeleri yeni boyuta gore guncelle
+    $form.Region        = New-Object System.Drawing.Region((New-RoundedPath $form.Width $form.Height ([int](20 * $s))))
+    $toggleBtn.Region   = New-Object System.Drawing.Region((New-RoundedPath $toggleBtn.Width $toggleBtn.Height ([int](22 * $s))))
+    $statusPanel.Region = New-Object System.Drawing.Region((New-RoundedPath $statusPanel.Width $statusPanel.Height ([int](12 * $s))))
 }
 
 # --- Kart paneli ---
@@ -166,7 +263,7 @@ function Add-LabeledNumeric {
 }
 
 # ================== FORM ==================
-$form               = New-Object System.Windows.Forms.Form
+$form               = New-Object BongoForm
 $form.Text          = "Bongo Cat Auto Clicker"
 $form.ClientSize    = New-Object System.Drawing.Size(420, 820)
 $form.StartPosition = "CenterScreen"
@@ -174,6 +271,9 @@ $form.FormBorderStyle = "None"
 $form.BackColor     = $cBg
 $form.Font          = New-Object System.Drawing.Font($fUI, 9)
 $form.Topmost       = $true
+$form.AspectRatio   = 420.0 / 820.0          # en-boy orani kilitli kalsin
+$form.MinW          = 300                      # en kucuk genislik
+$form.MinimumSize   = New-Object System.Drawing.Size(300, 586)
 $form.Region        = New-Object System.Drawing.Region((New-RoundedPath 420 820 20))
 
 # --- Surukleme ---
@@ -563,4 +663,29 @@ $form.Add_FormClosing({
 $toggleBtn.Tag = "go"
 Update-HumanControlsEnabled
 Update-UILanguage
+
+# --- Boyutlandirma: tasarim boyutunu (420x820) kaydet, sonra olcekle ---
+Record-Originals $form
+$script:originalsReady = $true
+
+# Pencere boyutlandikca tum icerigi oranli olcekle (canli, surukleme sirasinda)
+$form.Add_Resize({
+    if (-not $script:originalsReady) { return }
+    if ($form.ClientSize.Width -lt 50) { return }
+    $s = [double]$form.ClientSize.Width / $script:designW
+    Apply-UIScale $s
+})
+# Surukleme bitince yazi tiplerini oranli yenile (canli yenileme GDI'yi yormasin)
+$form.Add_ResizeEnd({
+    if (-not $script:originalsReady) { return }
+    $s = [double]$form.ClientSize.Width / $script:designW
+    Apply-FontScale $form $s
+})
+
+# Daha kucuk acilsin (~0.86 olcek) - kullanici kenarlardan buyutup kucultebilir
+$form.ClientSize = New-Object System.Drawing.Size(362, 707)
+$initScale = 362.0 / $script:designW
+Apply-UIScale $initScale
+Apply-FontScale $form $initScale
+
 [void]$form.ShowDialog()
