@@ -184,6 +184,28 @@ function Apply-UIScale {
     $statusPanel.Region = New-Object System.Drawing.Region((New-RoundedPath $statusPanel.Width $statusPanel.Height ([int](12 * $s))))
 }
 
+# Boyut secici: verilen yuzdeye gore pencereyi olcekle (50-250 arasi)
+$script:applyingSize = $false
+function Set-UIScalePercent {
+    param([int]$pct)
+    if ($pct -lt 50)  { $pct = 50 }
+    if ($pct -gt 250) { $pct = 250 }
+    $sc = $pct / 100.0
+    $form.ClientSize = New-Object System.Drawing.Size([int]($script:designW * $sc), [int]($script:designH * $sc))
+    if ($script:originalsReady) {
+        Apply-UIScale $sc
+        Apply-FontScale $form $sc
+    }
+    $script:applyingSize = $true
+    $sizeBox.Text = "$pct%"
+    $script:applyingSize = $false
+}
+function Get-SizeBoxPercent {
+    $digits = ($sizeBox.Text -replace '[^\d]', '')
+    if ($digits -ne '') { return [int]$digits }
+    return 0
+}
+
 # --- Kart paneli ---
 # Paint event KULLANILMIYOR: PS5.1'de Panel.Add_Paint BackColor render'ini bozuyor.
 # Accent bar -> child Panel (BackColor), border -> BorderStyle yok + hdr separator.
@@ -387,6 +409,27 @@ foreach ($l in @("English","Türkçe","中文","हिन्दी","Español","
 }
 $langBox.SelectedIndex = 0
 $langRow.Controls.Add($langBox)
+
+# ---- Boyut secici (yuzde - kullanici secer veya yazar) ----
+$sizeLabel          = New-Object System.Windows.Forms.Label
+$sizeLabel.Text     = "🔍"
+$sizeLabel.Font     = New-Object System.Drawing.Font($fEmoji, 10)
+$sizeLabel.ForeColor = $cSubText
+$sizeLabel.Location = New-Object System.Drawing.Point(258, 7)
+$sizeLabel.Size     = New-Object System.Drawing.Size(22, 22)
+$sizeLabel.BackColor = [System.Drawing.Color]::Transparent
+$langRow.Controls.Add($sizeLabel)
+
+$sizeBox          = New-Object System.Windows.Forms.ComboBox
+$sizeBox.Location = New-Object System.Drawing.Point(284, 6)
+$sizeBox.Size     = New-Object System.Drawing.Size(120, 24)
+$sizeBox.DropDownStyle = "DropDown"     # kullanici kendi degerini de yazabilir
+$sizeBox.FlatStyle = "Flat"
+$sizeBox.BackColor = $cCard
+$sizeBox.ForeColor = $cText
+$sizeBox.Font     = New-Object System.Drawing.Font($fUI, 8.5)
+foreach ($p in @("70%","85%","100%","125%","150%","175%","200%")) { [void]$sizeBox.Items.Add($p) }
+$langRow.Controls.Add($sizeBox)
 
 # ---- KART 1: Hiz ----
 $grpSpeed    = New-Card $form 16 208 388 100 "GRP_SPEED"
@@ -640,6 +683,26 @@ $langBox.Add_SelectedIndexChanged({
     }
 })
 
+# Boyut secici olaylari (listeden sec, Enter ile yaz, ya da odak kaybinda uygula)
+$sizeBox.Add_SelectedIndexChanged({
+    if ($script:applyingSize) { return }
+    $p = Get-SizeBoxPercent
+    if ($p -ge 1) { Set-UIScalePercent $p }
+})
+$sizeBox.Add_KeyDown({
+    param($s, $e)
+    if ($e.KeyCode -eq 'Return') {
+        $e.SuppressKeyPress = $true
+        $p = Get-SizeBoxPercent
+        if ($p -ge 1) { Set-UIScalePercent $p }
+    }
+})
+$sizeBox.Add_Leave({
+    if ($script:applyingSize) { return }
+    $p = Get-SizeBoxPercent
+    if ($p -ge 1) { Set-UIScalePercent $p }
+})
+
 $toggleBtn.Add_Click({ Set-Running (-not $engine.Running) })
 $toggleBtn.Add_MouseEnter({
     if ($toggleBtn.Tag -eq "stop") { $toggleBtn.BackColor = $cStopHover } else { $toggleBtn.BackColor = $cGoHover }
@@ -676,6 +739,10 @@ $form.Add_Resize({
     if ($form.ClientSize.Width -lt 50) { return }
     $s = [double]$form.ClientSize.Width / $script:designW
     Apply-UIScale $s
+    # Boyut kutusunu guncel yuzdeyle goster (kenardan surukleyince de degissin)
+    $script:applyingSize = $true
+    $sizeBox.Text = "$([int][Math]::Round($s * 100))%"
+    $script:applyingSize = $false
 })
 # Surukleme bitince yazi tiplerini oranli yenile (canli yenileme GDI'yi yormasin)
 $form.Add_ResizeEnd({
@@ -684,10 +751,13 @@ $form.Add_ResizeEnd({
     Apply-FontScale $form $s
 })
 
-# Daha kucuk acilsin (~0.86 olcek) - kullanici kenarlardan buyutup kucultebilir
-$form.ClientSize = New-Object System.Drawing.Size(362, 707)
-$initScale = 362.0 / $script:designW
+# Daha kucuk acilsin (%85) - kullanici ust kosedeki kutudan veya kenarlardan degistirebilir
+$initScale = 0.85
+$form.ClientSize = New-Object System.Drawing.Size([int]($script:designW * $initScale), [int]($script:designH * $initScale))
 Apply-UIScale $initScale
 Apply-FontScale $form $initScale
+$script:applyingSize = $true
+$sizeBox.Text = "85%"
+$script:applyingSize = $false
 
 [void]$form.ShowDialog()
