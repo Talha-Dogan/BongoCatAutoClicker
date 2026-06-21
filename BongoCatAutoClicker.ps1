@@ -175,13 +175,26 @@ function Apply-FontScale {
         if ($c -is [System.Windows.Forms.Panel]) { Apply-FontScale $c $s }
     }
 }
+# Yuvarlatilmis Region'i ayarlar; ESKI region ve gecici path DISPOSE edilir.
+# (Aksi halde her resize tikinde GDI nesnesi sizar ve kota dolunca
+#  "Parameter is not valid" hatasi cikar.)
+function Set-RoundedRegion {
+    param($ctrl, [int]$radius)
+    if ($ctrl.Width -le 0 -or $ctrl.Height -le 0) { return }
+    $path   = New-RoundedPath $ctrl.Width $ctrl.Height $radius
+    $region = New-Object System.Drawing.Region($path)
+    $old    = $ctrl.Region
+    $ctrl.Region = $region
+    if ($old) { $old.Dispose() }
+    $path.Dispose()
+}
 function Apply-UIScale {
     param([double]$s)
     Apply-LayoutScale $form $s
-    # Yuvarlatilmis bolgeleri yeni boyuta gore guncelle
-    $form.Region        = New-Object System.Drawing.Region((New-RoundedPath $form.Width $form.Height ([int](20 * $s))))
-    $toggleBtn.Region   = New-Object System.Drawing.Region((New-RoundedPath $toggleBtn.Width $toggleBtn.Height ([int](22 * $s))))
-    $statusPanel.Region = New-Object System.Drawing.Region((New-RoundedPath $statusPanel.Width $statusPanel.Height ([int](12 * $s))))
+    # Yuvarlatilmis bolgeleri yeni boyuta gore guncelle (GDI sizintisi olmadan)
+    Set-RoundedRegion $form        ([int](20 * $s))
+    Set-RoundedRegion $toggleBtn   ([int](22 * $s))
+    Set-RoundedRegion $statusPanel ([int](12 * $s))
 }
 
 # Boyut secici: verilen yuzdeye gore pencereyi olcekle (50-250 arasi)
