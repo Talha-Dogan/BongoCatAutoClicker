@@ -140,12 +140,14 @@ $script:origFont      = New-Object 'System.Collections.Generic.Dictionary[object
 $script:appliedFont   = New-Object 'System.Collections.Generic.Dictionary[object,System.Drawing.Font]'
 $script:originalsReady = $false
 
+# NOT: Sadece Panel kapsayicilarinin icine inilir. NumericUpDown / ComboBox gibi
+# bilesik kontrollerin ic alt kontrollerine DOKUNULMAZ (yoksa layout cokuyor).
 function Record-Originals {
     param($parent)
     foreach ($c in $parent.Controls) {
         $script:origBounds[$c] = $c.Bounds
         $script:origFont[$c]   = $c.Font
-        Record-Originals $c
+        if ($c -is [System.Windows.Forms.Panel]) { Record-Originals $c }
     }
 }
 function Apply-LayoutScale {
@@ -156,7 +158,7 @@ function Apply-LayoutScale {
             $c.Bounds = New-Object System.Drawing.Rectangle(
                 [int]($b.X * $s), [int]($b.Y * $s), [int]($b.Width * $s), [int]($b.Height * $s))
         }
-        Apply-LayoutScale $c $s
+        if ($c -is [System.Windows.Forms.Panel]) { Apply-LayoutScale $c $s }
     }
 }
 function Apply-FontScale {
@@ -170,7 +172,7 @@ function Apply-FontScale {
             if ($script:appliedFont.ContainsKey($c)) { $script:appliedFont[$c].Dispose() }
             $script:appliedFont[$c] = $nf
         }
-        Apply-FontScale $c $s
+        if ($c -is [System.Windows.Forms.Panel]) { Apply-FontScale $c $s }
     }
 }
 function Apply-UIScale {
